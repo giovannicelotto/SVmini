@@ -1,0 +1,423 @@
+# Auto generated configuration file
+# using: 
+# Revision: 1.19 
+# Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
+# with command line options: --eventcontent NANOEDMAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --era Run2_2018,run2_nanoAOD_106Xv2 --python_filename HIG-RunIISummer20UL18NanoAODv9-12707_1_cfg.py --fileout file:HIG-RunIISummer20UL18NanoAODv9-12707.root --filein dbs:/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM --number 1395 --number_out 1395 --no_exec --mc
+import FWCore.ParameterSet.Config as cms
+
+from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
+from Configuration.Eras.Modifier_run2_nanoAOD_106Xv2_cff import run2_nanoAOD_106Xv2
+
+process = cms.Process('NANO',Run2_2018,run2_nanoAOD_106Xv2)
+
+# import of standard configurations
+process.load('Configuration.StandardSequences.Services_cff')
+process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
+process.load('FWCore.MessageService.MessageLogger_cfi')
+process.load('Configuration.EventContent.EventContent_cff')
+process.load('SimGeneral.MixingModule.mixNoPU_cfi')
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.MagneticField_cff')
+process.load('PhysicsTools.NanoAOD.nano_cff')
+process.load('Configuration.StandardSequences.EndOfProcess_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+
+process.maxEvents = cms.untracked.PSet(
+    input = cms.untracked.int32(1395),
+    output = cms.untracked.int32(1395)
+)
+
+# Input source
+process.source = cms.Source("PoolSource",
+    fileNames = cms.untracked.vstring( (
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/00F7273C-6F52-7D4E-8175-E86320D6068A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/04732121-B658-C346-A553-D32FAB9F54CF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/066EB3D3-EC0B-D84B-9EE1-856CBF2F7824.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/08839B4A-DED8-224B-A722-33C38627D210.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/09423F69-34D3-D347-AF99-294716BB45E9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/09868E42-CEE4-B948-8BAB-C5BACD9DC8A3.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/09E95763-E951-EE4F-8224-D5292E3BF21C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/0DCFA64F-9390-AF4A-9BBE-7127A6FF11D0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/120F64CE-8943-2241-B02A-14AD5A296D4B.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/1322868B-0B1D-834E-B284-E95BBF560B55.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/156282B4-438E-C640-94D8-C42C4BFBBF02.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/1662F1E8-5D40-AC47-A4CB-BD3E05146A31.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/16896A5C-065B-7640-82AA-F0B026EA7CC5.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/170E527F-4044-7144-A3A4-6E74765A7282.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/1738E10A-E5B8-FC45-9D0D-D621E30DCFF6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/19AFBF71-FB50-D842-9C0E-9EAF88C25B82.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/214E04FC-C4EC-1F40-BDEB-B78D54EDF5A0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/22207BDB-BAE8-694B-A4C7-F9B7FFEE5156.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/236476F6-59D6-C143-AA70-863DF5A24A87.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/241176C9-35BC-7F4A-A043-3EC809C00161.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/295D9764-13C8-EE49-AD03-0B0EAAF14330.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/2A3249EB-C610-E940-A1D6-38E0F9FD2229.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/2ADE0F33-BB7E-6A48-B05D-4791E50F6FF6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/2D33C2FF-3A65-6846-9DA2-B8EDE8AE8CF7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/2EEE2C32-9BA1-D740-B9FC-04C2F5DFF838.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/2FE30931-39B5-7D45-A276-9D6F931E2070.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/3032047E-D186-9740-9497-140D3F181F10.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/3401C502-C28C-9540-BCD3-F77708AB7382.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/344E8F03-D9F7-CD4A-81BE-381D8167F9DB.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/359BEE45-0620-3143-A3B4-FBCC026BEAB7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/364171C7-F63B-DD41-9FEC-AA74D46EFED8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/366C0DAB-07AA-AD45-9BBD-31519887E7CA.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/372D9835-64DD-E74E-8A23-1072D8E3D5F8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/39B7C720-BAAC-CF41-9510-9A0C4AEE0DC7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/39CAE4FD-0BA5-AD43-949F-96F3E3446927.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/3BD4C1FE-4EAA-E34D-93AD-7DD9C97D8FA4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/3D9EBA71-1951-3644-8B0B-09295DE116C5.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/43918416-4EA6-494E-B67C-572FF832ED36.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/453471C1-E832-104B-B9BD-1F58CACA452C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/48F06D10-7A0F-0843-9589-5643005686D2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/4AC2E316-97D5-514B-9FFC-0029DA916842.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/4EA37708-8FF2-684B-A05D-A78D51C91385.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/5189CDFA-9B06-7B4C-BF6F-70EDFDA10B51.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/5793C6EB-11FA-1C46-8A0F-5B8C9C922C4C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/5CF391ED-B783-FF45-A1EE-A79FCFB37234.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/5D29B727-437E-F340-AB82-B39C9426173B.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/5E775555-C587-E94E-98D3-348A2C0428D1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/5F8E13A6-EC8F-034A-9E6D-8AD3BD7BA25D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/621069BE-3A42-F94E-8ABE-8F00EC1163E7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/651CFB53-5AC4-8B49-8FCF-CE3F3F298086.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/708D56D0-169F-964A-801B-5E4D3328F717.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/713AE522-4C75-6D48-BD94-8FF95CCE97FD.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/735713A9-4E83-244D-823B-6C8A3D22EDEF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/761596CF-538C-774C-8A7B-C3914BD080A6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/76414785-6D95-014B-BDF1-FF8B24485300.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/78977481-979C-C540-885F-ED1F5B30EE06.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/7CFBAA5A-F6BA-D146-97DE-D10D6187AD4C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/8287B6D9-1B11-1943-B10B-5F76DEF7AABA.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/833FE6CC-7DB8-9A4B-A4CC-1913B106BDE6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/87D7BE3B-CCF8-5F4F-A6D2-7D3B0A5A5EEA.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/8C4B5CA4-071D-F943-901E-E92F8D137990.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/8ED59D2B-CC72-6B42-A084-EE72E9C56F2A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/922446C3-8602-7C41-A6E6-F822A4568D8A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/929C370E-C0FD-EE40-87B9-014320DBBAAE.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/960561F2-7E50-A745-8786-BEDA275B8C6D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/960F26C6-4CF6-FD4F-B896-F8BDAF3D7BA3.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/968DAB51-BF86-A64C-892B-64C523C1A2D9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/973735B9-B55F-D741-ACDD-A4877507C899.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/997BB815-9B3C-8D4B-AF83-4F249B45E2BF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/9ABB3285-DE64-4A4F-9310-D30F6B386A43.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/9BA3E20C-D4DC-5B49-936D-7E8F48D9A8EC.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/9E0CDB9A-B51F-954B-B7DB-FB8522029987.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A0B259BE-6D77-C24C-9123-CFA2BAECD91E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A11C31F7-5E61-4F42-8124-331130D35F21.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A35F7A8D-AEA4-7841-82FF-F42187DD9400.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A5DE3E8F-86AF-7C4A-A952-F10B713FF118.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A6543148-E362-224B-BD2E-ED1E8EDAFCB5.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A7E2D262-F7E9-A14F-A3DE-0A1E5C9F04A3.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A873D09E-311D-B243-B390-8428E778ADB1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A8760AEC-342E-304B-BFFD-EBF5FA32FDD8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/A8D60D10-E525-504B-A7F3-1CB2A6B3750E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/B07F5FF6-C391-DC4A-84D3-52E03C310F9B.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/B2E6218D-38DB-DE4B-B73B-9839B5A0D3C2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/B5F1E6F3-B2BE-A34C-832C-45DFC1DC4582.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/B80C07D8-F4FD-5843-B36B-E6095AC0B76F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/B95F07ED-B7F3-7D4A-AF63-4B0FD358CB79.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/C0E769B3-BF5C-2044-BDEC-75F72A47D118.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/C7CBFB7F-2E06-3949-8081-F975224E1B06.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/C8783DE2-E9D0-9040-A191-9EB3411A10B2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/C95DF1F1-3E78-504C-A920-F6F9E1E7B522.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/CA975C56-2A53-0149-AE52-5833494D08FE.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/CD5E9160-1DB4-5B4D-928C-7249533FAEE8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/CD7977CC-5558-6F49-A813-AED902DDC7F7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/CE17C58F-70F0-934D-8003-966860F8FBB6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/CE5538D2-5ECF-8C47-AB7A-601DFDBBE07F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/D3E0704B-3992-1F49-A392-A5483D697FBE.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/D46B3C31-E772-FB45-957F-3E927D1C7439.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/D8533D96-A9D6-EF4F-9629-0054F17536EC.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/DCAC2E6F-F33E-1C41-9127-13F084A941FE.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/E27630CC-7393-A541-A908-20C33A7242AC.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/E2CCE144-9F35-CC4D-95E6-7928009D1A7D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/E35B9725-59CE-DE45-BB50-7530F11B316E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/E87495D5-DC02-1E45-8C2F-86248E77F164.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/E9971E76-DF73-D147-A1F3-E9D60E2C1E0A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/EC8C9254-DDF2-C948-8847-33DF57CC2BCB.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/EE280E4B-2523-0042-AE8C-B0DF9D62DFDC.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/EE2C36FE-425A-E04F-A0FE-44E0CD01D4A0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/EE3C5495-7ADF-E442-A9F4-5701ECB2415D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/EF5843C3-C702-DB4E-A8B5-0E3AEEF7179C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/F07785C1-DB27-4843-BC0D-85534A51CE89.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/FC438A5C-3DD6-5D40-8DC5-472D75983985.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/FC838956-CB1E-DB46-BB28-79879C9D1076.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/FCE3ABE3-DFEF-4E41-8494-991ACB9814B8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/FD29747C-3A04-6D47-8673-AF6E1F49736B.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2810000/FD98F627-CA66-E543-9BF5-6AD422AC71DF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/0191CDB5-D7F9-224E-9FA0-D62C65DCC997.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/0396608A-2D3B-764B-84FB-430DC921CD11.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/04F6C3A7-B47C-E94B-B729-EB43F48F1869.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/074896BB-9DE8-7B4F-96DB-0E13A4E938A0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/07FD418A-3A3B-DB43-9506-E4FCC7213CB2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/09904188-D920-BB4F-9D12-6605046EA94A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/0ED467AF-1036-B940-B6DD-6495AAB68A1C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/0F70F7D4-D04D-8444-9D82-8B5C83E064B4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/14A403D8-907F-A846-A167-8CD0621C2F9D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/160F10E2-D32F-F54B-8CC8-1FE4F73ACD03.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/1877664C-285F-4B4D-8391-3C67AC482CFB.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/19618794-BCB2-764C-B10B-673DE92F29D9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/19E5800E-0E3F-3540-B51A-8C94488C4071.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/1AB38681-51B6-FC49-8C5B-BA5394459F4D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/20D58A44-3383-F44B-B8B2-AE9DAEB9B30C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/2EA05865-4974-6547-B4BB-41DF2503251C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/366FE758-2AF7-8042-AC3B-191B3AFEFF8E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/3D2608DF-F052-0544-AE17-399DC906C1EC.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/47F3941F-4187-934F-B7D2-CFC8AB2F28B2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/62BC18B8-B0AA-B24F-BBF7-F3CD9BF0D74C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/63529509-BF1B-1044-99C7-633492C25514.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/64C2E6B0-DB02-1746-89BE-A0AD7114FEC6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/6D1711B3-6BDC-3946-B959-42CF4D2A7CFF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/6F01B5B8-C9D7-2E41-BF75-4B2C2D752284.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/74BC9461-F77F-F541-9BA0-56381190A316.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/783BB470-3474-E344-B271-1526CA9DB9E8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/7E6679C3-E8B0-AD44-8FE5-C5EE5D003271.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/81D7B643-02F2-1347-92F0-BFF34CEC36C5.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/83AB4FFF-8442-BA46-A604-31F014151352.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/856A3A98-B10E-8048-B10A-92BF8C0A6259.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/8642258B-92CC-0A4E-90CA-731298061079.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/891333A2-3A56-9943-A19E-5665D0560A8E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/8A3CE9B1-A83C-6440-8621-0F0FA560FFAB.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/90B2629B-6E98-D148-8252-BEB41E5D4BAD.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/98BD4CD8-531A-8D47-9D20-85F86F3E9BF9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/9F5E320D-84B5-2E40-AAA8-349C39B5D6C4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/A61648AB-49F4-1D49-A6F6-3E79602B72B4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/B45F4E4A-1469-6D4B-B5FC-B16F394BE15D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/B7B032D6-0866-844A-A567-78128A700453.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/BBB5D339-ADD4-5E45-B524-A0F3E09B6376.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/BD605D27-2EF2-5448-9D71-C37D56A62D00.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/C3D5DE47-A412-4A49-BB3B-679B52C7007C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/D33AB649-4B8A-3840-BED7-A3332552D87A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/E2D9A5DA-0340-AE4A-8B2F-185A852F1290.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/E38AAC5E-6897-2347-918B-BCA4D42D535D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/E6B35CCD-C7FC-2742-AD63-419E41732B5F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/E99031B0-CAE5-CB43-9B08-93E2C123B8DD.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/EAE2C77C-99EE-6F45-ADEF-64FA6A79151D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/F4F3AF7C-AFA0-C143-8ED7-8F129FFD9EB6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/F5505093-4F0B-9B4C-85D6-E744CA58982D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/F614F791-F4FF-9A48-8454-79677280105F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/F7E4F748-A01B-554E-87CA-F89A83299DB1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/F8353DBD-454B-6D43-BE0F-310D920095CA.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2820000/FE44E90A-C9B3-B048-AEB4-FA7C02576C7E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/02D4C06E-C9C4-F045-94AE-ABD75A589A44.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/03417504-D565-E94B-86C0-09EF8606D5C5.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/0532AFA4-AD89-0D4E-9BDF-F0B6383179E4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/0AFF220B-A144-C744-8E33-736F501DD028.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/0B559C7C-AFF3-1C44-85AC-A88B8A570F6D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/0DEA5BD2-6228-4546-8BBE-0DDD0EA39C35.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/0F661F98-FBF7-BD46-A205-7BFBA3F48891.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/18F663D4-0D7C-7B46-8CF3-F2614143B89A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/2221C934-8C81-E646-B67B-18512AD5CBE3.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/290ACF1C-6027-E544-9D32-BD7AE9037A4C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/2B186F71-1E46-4A49-9453-438C06007A08.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/2F1ADE8E-ED96-E541-A39D-AFFE340396CF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/2FEC49AF-9930-3E4E-A6E9-B6768E57CF65.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/31805141-F5E6-9E41-8949-5D95570DDC2A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/32B9B640-2FDE-C84F-B375-594F8D779F63.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/377A5A53-00CB-0543-8130-2730B07ABF64.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/39164B3C-ED06-354B-BB9C-B5733176251A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/39A13272-E29D-D044-8179-BB8A628BD2BC.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/3EF02B2E-3E8B-C34C-A89F-CDB0784540F1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/4B74DC04-D3EF-A247-8571-E417DD7533A8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/4BEFF78D-6AFC-F047-9E23-EBE2C84F6B72.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/52C5FA0E-C849-AD41-96E8-CC35F01574E9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/580A870A-01DC-7F4B-A25F-A6C8E659B408.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/5B24BDAA-FD19-D349-B26A-215B4A8179B7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/69778430-4BC7-B545-886E-3C0A4AE9916B.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/6FB345E4-408F-D042-966A-DFAF22359022.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/73DEBD70-F7FE-AC44-A75D-EFD61FB80848.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/783695B0-AF92-724B-8A01-06F1A310E612.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/810CC444-EA77-BA48-AC38-96DCE16E5BBE.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/83485F7E-202D-3747-B4E5-D24C1A21AD54.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/8383BA98-E4D0-F04D-9B9C-E055C5215572.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/838BE0F5-1BE9-5B4B-91EA-D58175841F92.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/85AB01F5-A253-1F4C-8B39-92C8B4BB72F0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/85F4CCE5-5D1B-B749-A3EB-F5C9644AD862.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/88AE1EA6-7C19-C148-9BEE-98BE5A6287CF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/8E365720-56D7-A048-8A25-7D9A26682DFB.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/9179E2DD-8DAA-EF42-9B6E-B61A0EA66DA5.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/94783F4E-02D5-5A44-B043-5590A72AB846.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/9B462E47-1202-514B-AAE9-37C65983B473.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/9B522ED7-53BC-B548-A495-92CDFAB93C92.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/9CDB0964-2237-7443-A579-7CE859B40DB4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/ABF56A02-50BD-7947-9779-91A0A27771E6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/BB3BB7A8-C068-1D4B-B40D-C61A4F4CC06D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/BB9B7671-80A6-9141-B6B4-2CAEA7612509.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/C3FF92C9-05B3-5945-BE03-08664A75EA78.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/C4D7ED02-20E5-7343-831E-3B4A9E05856E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/C5DC8526-BAE2-F04D-8C02-CE0B00918384.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/CC5E8FF7-BD60-1644-8AB5-254D3A9B03E3.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/D01AB4F8-DB5B-664B-B595-781FF156B7AE.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/D0933757-75F6-3840-9335-F6F457B39085.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/D71D1E91-D875-5545-94EE-FF65B7EF190E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/D90E3317-5A0D-084B-8924-178DE07C721A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/D92334C2-7FA4-C04A-8691-A5C3FD4980D8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/DD52E930-B1D6-0843-8238-6E926612E055.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/E2BFD24B-3917-B243-B73F-CA1DA91E0FB6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/EA643E00-1FB2-1545-8ECA-EF1C0E87828D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/EC0AD7E8-46DC-6740-9988-06B3FD73D265.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/ED868179-8DA4-6044-92C9-03149802A033.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/F6F98D71-FE93-954F-A08C-C03BB5899673.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/FB794A8B-DEA8-6A49-A915-70A05378478F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/70000/FE446549-F1A4-7F4B-8424-62B03E4755DF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/0184C974-EE99-1640-AC52-316AC176F9F3.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/01C8546F-13A4-6745-8BFA-4D13EE69AE86.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/023CCA1F-1F5F-0343-BF11-D98AF29625A5.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/043121FF-C82E-6543-A61C-F2440F257E74.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/0479142D-1E19-A745-B020-5DFDF571A15F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/097126BA-D941-5349-A457-C3FC4DEB2123.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/0B3C99DB-79A8-2E43-AC86-78E7FCC5B7F3.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/0C32FA5E-7B8E-5B49-9C5E-83E2A1558EC1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/0DFC38B8-15C9-C549-BFC0-B7FF494684E4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/0E4FE81F-FAEC-564F-8FB5-0D24FEE20C07.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/0EFDCAD0-94A5-7D43-A7C3-EC92625F031C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/10631B9F-2C3C-2942-A1C2-82572CDFBF88.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/11523CEF-9A34-2546-9014-2A0AE17920A6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/161E8D0E-3B92-A046-A0A0-EE31860ACDFE.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/174268FD-279B-F346-85DB-8B7DC454C090.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/18D27AEB-D641-524B-A6CB-E7F1BE1E905D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/237E5542-EB42-064C-BB2B-FA39912C78AC.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/24CD3015-E27F-354C-AF86-666D0CB9DE30.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/25589D9E-7027-AF40-9472-EE5F047D7F8E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/25A6EF62-C980-124B-A8D0-4D46FEFA9DE4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/273F32D4-8255-3446-B70D-494DB6853401.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/2B298A8E-25C5-5744-A232-F4AAFA209DE1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/2D05EAC2-78CE-AF40-B0D8-B888CD0FF217.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/35DA390E-BB0C-F04E-B97A-A484E7CE0E13.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/3969E7ED-0D96-394E-90D3-BF44CD7C7CC2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/3A8FA218-DDC8-5C4A-96F2-FC9D633E9FA9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/3BCE5955-0189-FB49-BBAE-03DCA492D727.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/3D462044-5F56-E144-9B2B-C55691E3B164.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/41947BA3-0CE9-EC44-B7AA-9D083EB658E0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/45A51BE0-D271-2F4C-A832-6C703C3A066D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/47748766-093F-664C-BC86-166648A54B77.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/49476530-9B8D-EF40-B324-D683E8A32762.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/4B89D3ED-CA5B-3E49-A927-9AEE187D9ECF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/4D091C3D-F9E0-2A4A-BFF1-64FE2B9E8FA0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/4D65192F-B15E-4E46-85EE-ACD02E497662.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/51F89FDC-7736-DD4D-8405-9C0DB96292BF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/558C3844-1852-BB41-A9A0-8C38A82A7C64.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/5879A8DC-9725-614A-AE69-3F2576053CD7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/5A1EFB79-8608-8C4B-A8CC-9719FDA288AD.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/5A5FF142-A44A-1148-895D-53FBA58DB2B0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/5F34BA2E-E902-2C46-97FC-8B77403DFD8F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/62E00FD0-6880-ED45-9E98-93477C700408.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/6A9ED507-5EB2-0745-8783-458AA3AE171D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/6DDAF118-216D-7445-B7E5-80B243C93AB7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/7324564C-C95F-1A45-9D2A-B78FC661E68A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/74310CDA-3F1E-7E40-8BFF-EAB61D703DDB.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/7647E717-BD06-9A47-BBDE-AFE1ED07199F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/76D058A4-ECA1-8941-9035-4AEFF6C47E75.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/76DCDD13-2EDB-6F49-8F88-702E1E0FC065.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/77D7D5F6-3091-9F47-8FB8-16DBF5C3334E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/7B9B536A-2FD2-0D49-BEC4-23D01A873C4F.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/7DDE331B-67E4-BD42-9677-1C9A456230F1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/7FE6D7DE-2166-844C-89A6-898E09413D1E.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/80F2518A-1350-6147-8D39-B10891DCECFA.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/8257AAA6-13B4-D04D-9B85-A19EE15AA08D.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/82C65FA2-1D42-9047-9AE1-E788F86F9269.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/8332E724-D59A-7448-A8BE-71DEE37F8E51.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/8B7C24A8-B051-1B41-A9CC-38A2300DCCE1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/8CF3F6FA-8521-C54C-93AD-53F3A947D550.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/982100A0-4E8E-324C-A0A6-C90F265BC1E9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/9941E7CE-A171-1243-B813-367E2FDFC296.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/99EF372B-E761-B247-8208-05D89F5D3C55.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/9D224D17-ABA9-EE49-80BB-272AD4B23979.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/A891EB31-0A56-CA4F-97FB-C052F8B58C50.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/A9496170-B527-E445-9561-E6DFBE58B7C8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/A96DFA26-1FAD-AE4D-B8E7-A1D59B3F2015.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/ADEB3806-D938-174B-8926-A01A15F3D5D4.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/AE4DF8B9-FE7B-2540-BCF5-89AEC95A361C.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/AE533CD9-BCC6-9647-AE5B-96C072370ED8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/AFF535C1-596A-FD4F-B4C1-8FDD9E1E104B.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/B1B39E2D-4C33-3E49-AED1-B1E5895F0ED0.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/B5AFEE18-BD49-3D4D-B4F1-DFDD8692732A.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/B917658A-2990-EA48-BEA5-A2EE99136BB7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/BABBBACA-4F85-0445-B4A6-ADA9C83AF681.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/D68BA266-EDA1-3147-B4B7-8CFD29866590.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/DF92826C-1FE4-B749-9961-02554AE40118.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/E2243F30-C045-214A-8BDC-256F4466B0C2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/E315ED8B-553A-8F46-87E7-41B2F487C8E1.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/E39F9E2F-2672-DD40-935D-77BA51C25AED.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/E74371BA-3690-2A4B-A2F7-D4897AD8F7F2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/E95A25FE-0FE0-624F-A155-167F65B04ECF.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/ECBAC7F1-9E44-7C46-96E2-27AC4AD72631.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/EF19F0AE-9A69-BF44-B388-3C75A63944BB.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/EF79C437-EFE3-ED4D-8724-03EB57C4FDC9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/F1127FC8-7A5F-7448-A755-65FB0DBEC6F7.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/F2907562-1513-1749-BECC-E314E726D676.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/F5AB35CD-3636-6648-B90C-735259F2BC39.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/F694D4F7-7981-4146-BA63-A652F04AC0D6.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/F69533F6-FF56-8547-B659-46CAB570C4BD.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/F6FE5FD5-A36C-FB47-AE0E-A73967AB74C2.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/F73A0E9D-6613-3D4A-9576-71EAA58083A9.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/F8BB45A0-5977-9243-ADA3-21BBAFAFCD57.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/FE5F330D-3D24-584D-B63B-87A805D9952B.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/FF575C4A-8BD7-F943-BE11-9E33496AECA8.root', 
+        '/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/80000/FFAD3514-5D64-DD43-AAAD-9B7A7166D08A.root'
+     ) ),
+    secondaryFileNames = cms.untracked.vstring()
+)
+
+process.options = cms.untracked.PSet(
+
+)
+
+# Production Info
+process.configurationMetadata = cms.untracked.PSet(
+    annotation = cms.untracked.string('--eventcontent nevts:1395'),
+    name = cms.untracked.string('Applications'),
+    version = cms.untracked.string('$Revision: 1.19 $')
+)
+
+# Output definition
+
+process.NANOEDMAODSIMoutput = cms.OutputModule("PoolOutputModule",
+    compressionAlgorithm = cms.untracked.string('LZMA'),
+    compressionLevel = cms.untracked.int32(9),
+    dataset = cms.untracked.PSet(
+        dataTier = cms.untracked.string('NANOAODSIM'),
+        filterName = cms.untracked.string('')
+    ),
+    fileName = cms.untracked.string('file:HIG-RunIISummer20UL18NanoAODv9-12707.root'),
+    outputCommands = process.NANOAODSIMEventContent.outputCommands
+)
+
+# Additional output definition
+
+# Other statements
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v16_L1v1', '')
+
+# Path and EndPath definitions
+process.nanoAOD_step = cms.Path(process.nanoSequenceMC)
+process.endjob_step = cms.EndPath(process.endOfProcess)
+process.NANOEDMAODSIMoutput_step = cms.EndPath(process.NANOEDMAODSIMoutput)
+
+# Schedule definition
+process.schedule = cms.Schedule(process.nanoAOD_step,process.endjob_step,process.NANOEDMAODSIMoutput_step)
+from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
+associatePatAlgosToolsTask(process)
+
+# customisation of the process.
+
+# Automatic addition of the customisation function from PhysicsTools.NanoAOD.nano_cff
+from PhysicsTools.NanoAOD.nano_cff import nanoAOD_customizeMC 
+
+#call to customisation function nanoAOD_customizeMC imported from PhysicsTools.NanoAOD.nano_cff
+process = nanoAOD_customizeMC(process)
+
+# Automatic addition of the customisation function from Configuration.DataProcessing.Utils
+from Configuration.DataProcessing.Utils import addMonitoring 
+
+#call to customisation function addMonitoring imported from Configuration.DataProcessing.Utils
+process = addMonitoring(process)
+
+# End of customisation functions
+
+# Customisation from command line
+
+# Add early deletion of temporary data products to reduce peak memory need
+from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
+process = customiseEarlyDelete(process)
+# End adding early deletion
