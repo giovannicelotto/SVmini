@@ -92,30 +92,39 @@ process.inclusiveCandidateSecondaryVertices.secondaryVertices = cms.InputTag(   
 
 
 
-from PhysicsTools.NanoAOD.common_cff import Var, CandVars
-process.svAVFTable = cms.EDProducer(
-    "SimpleCompositeCandidateFlatTableProducer",
-    src = cms.InputTag("inclusiveCandidateSecondaryVertices"),  # your SV collection
-    cut = cms.string(""),  # can filter SVs if needed
-    name = cms.string("SVAVF"),  # this will be the branch prefix
-    doc  = cms.string("Secondary vertices from AVF"),
-    singleton = cms.bool(False),   # we have multiple SVs per event
-    extension = cms.bool(False),   # not adding to existing table
-    variables = cms.PSet(
-        x        = Var("position().x()", float, doc="x coordinate of SV"),
-        y        = Var("position().y()", float, doc="y coordinate of SV"),
-        z        = Var("position().z()", float, doc="z coordinate of SV"),
-        #chi2     = Var("chi2()", float, doc="chi2 of SV fit"),
-        #ndof     = Var("ndof()", float, doc="ndof of SV fit"),
-        nTracks  = Var("numberOfDaughters()", int, doc="number of tracks in SV"),
-        #mass     = Var("p4().mass()", float, doc="mass of SV candidate")
-    )
+from PhysicsTools.NanoAOD.common_cff import P4Vars, Var, CandVars
+process.vertexTable = cms.EDProducer("VertexTableProducer",
+    pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    goodPvCut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"), 
+    svSrc = cms.InputTag("inclusiveCandidateSecondaryVertices"),
+    svCut = cms.string(""),
+    dlenMin = cms.double(0),
+    dlenSigMin = cms.double(3),
+    pvName = cms.string("PV"),
+    svName = cms.string("SV"),
+    svDoc  = cms.string("secondary vertices from IVF algorithm"),
+    storeCharge = cms.bool(False)
 )
 
 
 
 
 
+process.svCandidateTable =  cms.EDProducer("SimpleCandidateFlatTableProducer",
+    src = cms.InputTag("vertexTable"),
+    cut = cms.string(""),  #DO NOT further cut here, use vertexTable.svCut
+    name = cms.string("SV_AVF"),
+    singleton = cms.bool(False), # the number of entries is variable
+    extension = cms.bool(True), 
+    variables = cms.PSet(P4Vars,
+        x   = Var("position().x()", float, doc = "secondary vertex X position, in cm",precision=10),
+        y   = Var("position().y()", float, doc = "secondary vertex Y position, in cm",precision=10),
+        z   = Var("position().z()", float, doc = "secondary vertex Z position, in cm",precision=14),
+        ndof    = Var("vertexNdof()", float, doc = "number of degrees of freedom",precision=8),
+        chi2    = Var("vertexNormalizedChi2()", float, doc = "reduced chi2, i.e. chi/ndof",precision=8),
+        ntracks = Var("numberOfDaughters()", "uint8", doc = "number of tracks"),
+    ),
+)
 
 process.nanoAOD_step = cms.Path(
     process.unpackedTracksAndVertices *
@@ -123,11 +132,14 @@ process.nanoAOD_step = cms.Path(
     process.candidateVertexMerger *
     process.candidateVertexArbitrator *
     process.inclusiveCandidateSecondaryVertices *
-    process.nanoSequenceMC
+    process.nanoSequenceMC*
+    process.vertexTable *
+    process.svCandidateTable
 )
 process.NANOEDMAODSIMoutput.outputCommands += [
     'drop *',
-    "keep nanoaodFlatTable_*Table*_*_*",  # Keep event-level FlatTables
+    'keep nanoaodFlatTable_vertexTable_*_*',
+    'keep nanoaodFlatTable_svCandidateTable_*_*',
 ]
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.NANOEDMAODSIMoutput_step = cms.EndPath(process.NANOEDMAODSIMoutput)

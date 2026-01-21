@@ -1,0 +1,10 @@
+PhysicsToolsNanoAODPlugins_PACKAGE := self/src/PhysicsTools/NanoAOD/plugins
+runtestPhysicsToolsNanoAOD_PACKAGE := self/src/PhysicsTools/NanoAOD/test
+GeneratorInterfaceCore_plugins_PACKAGE := self/src/GeneratorInterface/Core/plugins
+GeneratorInterfaceCore_PACKAGE := self/src/GeneratorInterface/Core/src
+FailingGeneratorFilter_PACKAGE := self/src/GeneratorInterface/Core/test
+FailingGeneratorFilterTest_PACKAGE := self/src/GeneratorInterface/Core/test
+cmsExternalGenerator_PACKAGE := self/src/GeneratorInterface/Core/bin
+GeneratorInterfaceGenFiltersPlugins_PACKAGE := self/src/GeneratorInterface/GenFilters/plugins
+GeneratorInterfaceGenFilters_PACKAGE := self/src/GeneratorInterface/GenFilters/src
+FWCoreVersion_PACKAGE := self/src/FWCore/Version/src
