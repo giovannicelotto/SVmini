@@ -49,17 +49,22 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Output definition
 
-process.NANOEDMAODSIMoutput = cms.OutputModule("PoolOutputModule",
+process.NANOEDMAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
     compressionAlgorithm = cms.untracked.string('LZMA'),
     compressionLevel = cms.untracked.int32(9),
     dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('NANOAODSIM'),
+        dataTier = cms.untracked.string('NANOAOD'),
         filterName = cms.untracked.string('')
     ),
     fileName = cms.untracked.string('file:HIG-RunIISummer20UL18NanoAODv9-12707.root'),
-    outputCommands = process.NANOAODSIMEventContent.outputCommands
+    outputCommands = cms.untracked.vstring(
+    'drop *',  # Drop everything by default
+    "keep nanoaodFlatTable_*Table*_*_*",  # Keep event-level FlatTables
+    "keep nanoaodUniqueString_nanoMetadata_*_*",  # Keep basic metadata
+    "keep nanoaodMergeableCounterTable_*_*_*",
+    #"keep TTree_Runs_*_*"
 )
-
+)
 # Additional output definition
 
 # Other statements
@@ -80,58 +85,73 @@ process.unpackedTracksAndVertices = unpackedTracksAndVertices
 
 process.inclusiveVertexFinder.tracks = cms.InputTag("unpackedTracksAndVertices")
 process.inclusiveVertexFinder.primaryVertices = cms.InputTag("unpackedTracksAndVertices")
-process.candidateVertexMerger.secondaryVertices = cms.InputTag(     "inclusiveVertexFinder" )
+process.vertexMerger = cms.EDProducer(
+    "VertexMerger",
+    secondaryVertices = cms.InputTag("inclusiveVertexFinder"),  # module label of the previous producer
+    maxFraction = cms.double(0.7), # needs to be wrapped in a CMS type
+    minSignificance = cms.double(2.0)
+)
 
-process.candidateVertexArbitrator.tracks = cms.InputTag(     "unpackedTracksAndVertices" )
-process.candidateVertexArbitrator.primaryVertices = cms.InputTag(     "unpackedTracksAndVertices" )
-process.candidateVertexArbitrator.secondaryVertices = cms.InputTag(     "candidateVertexMerger" )
+process.trackVertexArbitrator = cms.EDProducer(
+    "TrackVertexArbitrator",
+    tracks = cms.InputTag("unpackedTracksAndVertices"),
+    primaryVertices = cms.InputTag("unpackedTracksAndVertices"),
+    secondaryVertices = cms.InputTag("vertexMerger"),
+    # plus any additional parameters it requires
+)
 
-process.inclusiveCandidateSecondaryVertices.secondaryVertices = cms.InputTag(     "candidateVertexArbitrator" )
+process.inclusiveSecondaryVertices = process.vertexMerger.clone(
+    secondaryVertices = "trackVertexArbitrator",
+    maxFraction = cms.double(0.2),
+    minSignificance = cms.double(10)
+)
 
 
 
 
 from PhysicsTools.NanoAOD.common_cff import P4Vars, Var, CandVars
-process.vertexTable = cms.EDProducer("VertexTableProducer",
-    pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices"),
-    goodPvCut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"), 
-    svSrc = cms.InputTag("inclusiveCandidateSecondaryVertices"),
-    svCut = cms.string(""),
-    dlenMin = cms.double(0),
-    dlenSigMin = cms.double(3),
-    pvName = cms.string("PV"),
-    svName = cms.string("SV"),
-    svDoc  = cms.string("secondary vertices from IVF algorithm"),
-    storeCharge = cms.bool(False)
-)
+
+
+#process.vertexTable = cms.EDProducer("VertexTableProducer",
+#    pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices"),
+#    goodPvCut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"), 
+#    svSrc = cms.InputTag("inclusiveSecondaryVertices"),
+#    svCut = cms.string(""),
+#    dlenMin = cms.double(0),
+#    dlenSigMin = cms.double(3),
+#    pvName = cms.string("PV"),
+#    svName = cms.string("SV"),
+#    svDoc  = cms.string("secondary vertices from IVF algorithm"),
+#    storeCharge = cms.bool(False)
+#)
 
 
 
 
 
-process.svCandidateTable =  cms.EDProducer("SimpleCandidateFlatTableProducer",
-    src = cms.InputTag("vertexTable"),
-    cut = cms.string(""),  #DO NOT further cut here, use vertexTable.svCut
-    name = cms.string("SV_AVF"),
-    singleton = cms.bool(False), # the number of entries is variable
-    extension = cms.bool(True), 
-    variables = cms.PSet(P4Vars,
-        x   = Var("position().x()", float, doc = "secondary vertex X position, in cm",precision=10),
-        y   = Var("position().y()", float, doc = "secondary vertex Y position, in cm",precision=10),
-        z   = Var("position().z()", float, doc = "secondary vertex Z position, in cm",precision=14),
-        ndof    = Var("vertexNdof()", float, doc = "number of degrees of freedom",precision=8),
-        chi2    = Var("vertexNormalizedChi2()", float, doc = "reduced chi2, i.e. chi/ndof",precision=8),
-        ntracks = Var("numberOfDaughters()", "uint8", doc = "number of tracks"),
-    ),
-)
-
+#process.svCandidateTable =  cms.EDProducer("SimpleCandidateFlatTableProducer",
+#    src = cms.InputTag("vertexTable"),
+#    cut = cms.string(""),  #DO NOT further cut here, use vertexTable.svCut
+#    name = cms.string("SV_AVF"),
+#    singleton = cms.bool(False), # the number of entries is variable
+#    extension = cms.bool(True), 
+#    variables = cms.PSet(P4Vars,
+#        x   = Var("position().x()", float, doc = "secondary vertex X position, in cm",precision=10),
+#        y   = Var("position().y()", float, doc = "secondary vertex Y position, in cm",precision=10),
+#        z   = Var("position().z()", float, doc = "secondary vertex Z position, in cm",precision=14),
+#        ndof    = Var("vertexNdof()", float, doc = "number of degrees of freedom",precision=8),
+#        chi2    = Var("vertexNormalizedChi2()", float, doc = "reduced chi2, i.e. chi/ndof",precision=8),
+#        ntracks = Var("numberOfDaughters()", "uint8", doc = "number of tracks"),
+#    ),
+#)
+# https://github.com/cms-sw/cmssw/blob/7507310cad2a51edad7517f124d1e8993ce0e1c8/RecoVertex/AdaptiveVertexFinder/python/inclusiveVertexing_cff.py#L7
 process.nanoAOD_step = cms.Path(
     process.unpackedTracksAndVertices *
     process.inclusiveVertexFinder *
-    process.candidateVertexMerger 
-    #process.candidateVertexArbitrator *
-    #process.inclusiveCandidateSecondaryVertices *
-    #process.nanoSequenceMC*
+    process.vertexMerger *
+    process.trackVertexArbitrator *
+    process.inclusiveSecondaryVertices *
+    process.nanoSequenceMC
     #process.vertexTable *
     #process.svCandidateTable
 )
