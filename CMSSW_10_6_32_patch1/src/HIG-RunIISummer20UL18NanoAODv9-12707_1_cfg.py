@@ -4,7 +4,7 @@
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
 # with command line options: --eventcontent NANOEDMAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --era Run2_2018,run2_nanoAOD_106Xv2 --python_filename HIG-RunIISummer20UL18NanoAODv9-12707_1_cfg.py --fileout file:HIG-RunIISummer20UL18NanoAODv9-12707.root --filein dbs:/GluGluHToBB_M-125_TuneCP5_MINLO_NNLOPS_13TeV-powheg-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM --number 1395 --number_out 1395 --no_exec --mc
 
-print("Start")
+
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
@@ -78,12 +78,11 @@ process.load("RecoVertex.AdaptiveVertexFinder.inclusiveVertexing_cff")
 
 process.unpackedTracksAndVertices = unpackedTracksAndVertices
 
-process.inclusiveCandidateVertexFinder.tracks = cms.InputTag(     "packedPFCandidates" ) #https://github.com/cms-sw/cmssw/blob/712e925576cdaabfc2bc3abfb2162b38756f09ee/PhysicsTools/PatAlgos/plugins/TrackAndVertexUnpacker.cc#L54
-process.inclusiveCandidateVertexFinder.primaryVertices = cms.InputTag(     "unpackedTracksAndVertices" )
+process.inclusiveVertexFinder.tracks = cms.InputTag("unpackedTracksAndVertices")
+process.inclusiveVertexFinder.primaryVertices = cms.InputTag("unpackedTracksAndVertices")
+process.candidateVertexMerger.secondaryVertices = cms.InputTag(     "inclusiveVertexFinder" )
 
-process.candidateVertexMerger.secondaryVertices = cms.InputTag(     "inclusiveCandidateVertexFinder" )
-
-process.candidateVertexArbitrator.tracks = cms.InputTag(     "packedPFCandidates" )
+process.candidateVertexArbitrator.tracks = cms.InputTag(     "unpackedTracksAndVertices" )
 process.candidateVertexArbitrator.primaryVertices = cms.InputTag(     "unpackedTracksAndVertices" )
 process.candidateVertexArbitrator.secondaryVertices = cms.InputTag(     "candidateVertexMerger" )
 
@@ -128,13 +127,13 @@ process.svCandidateTable =  cms.EDProducer("SimpleCandidateFlatTableProducer",
 
 process.nanoAOD_step = cms.Path(
     process.unpackedTracksAndVertices *
-    process.inclusiveCandidateVertexFinder *
-    process.candidateVertexMerger *
-    process.candidateVertexArbitrator *
-    process.inclusiveCandidateSecondaryVertices *
-    process.nanoSequenceMC*
-    process.vertexTable *
-    process.svCandidateTable
+    process.inclusiveVertexFinder *
+    process.candidateVertexMerger 
+    #process.candidateVertexArbitrator *
+    #process.inclusiveCandidateSecondaryVertices *
+    #process.nanoSequenceMC*
+    #process.vertexTable *
+    #process.svCandidateTable
 )
 process.NANOEDMAODSIMoutput.outputCommands += [
     'drop *',
@@ -170,4 +169,7 @@ process = addMonitoring(process)
 # Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
 process = customiseEarlyDelete(process)
+#print("Start")
+#print(process.dumpPython())
+#print("End of Dump")
 # End adding early deletion
