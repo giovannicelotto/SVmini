@@ -81,20 +81,52 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v16
 #   SECONDARY VERTICES
 #
 #
-# Path and EndPath definitions
-unpackedTracksAndVertices = cms.EDProducer('PATTrackAndVertexUnpacker',
+
+process.load("RecoVertex.AdaptiveVertexFinder.inclusiveVertexing_cff")
+
+process.unpackedTracksAndVertices = cms.EDProducer('PATTrackAndVertexUnpacker',
     slimmedVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
     slimmedSecondaryVertices = cms.InputTag("slimmedSecondaryVertices"),
     additionalTracks = cms.InputTag("lostTracks"),
     packedCandidates = cms.InputTag("packedPFCandidates")
 )
 
-process.load("RecoVertex.AdaptiveVertexFinder.inclusiveVertexing_cff")
-
-process.unpackedTracksAndVertices = unpackedTracksAndVertices
-
-process.inclusiveVertexFinder.tracks = cms.InputTag("unpackedTracksAndVertices")
-process.inclusiveVertexFinder.primaryVertices = cms.InputTag("unpackedTracksAndVertices")
+process.inclusiveVertexFinder = cms.EDProducer('InclusiveVertexFinder',
+  beamSpot = cms.InputTag('offlineBeamSpot'),
+  primaryVertices = cms.InputTag('unpackedTracksAndVertices'),
+  tracks = cms.InputTag('unpackedTracksAndVertices'),
+  minHits = cms.uint32(8),
+  maximumLongitudinalImpactParameter = cms.double(0.3),
+  maximumTimeSignificance = cms.double(3),
+  minPt = cms.double(0.8),
+  maxNTracks = cms.uint32(30),
+  clusterizer = cms.PSet(
+    seedMax3DIPSignificance = cms.double(9999),
+    seedMax3DIPValue = cms.double(9999),
+    seedMin3DIPSignificance = cms.double(1.2),
+    seedMin3DIPValue = cms.double(0.005),
+    clusterMaxDistance = cms.double(0.05),
+    clusterMaxSignificance = cms.double(4.5),
+    distanceRatio = cms.double(20),
+    clusterMinAngleCosine = cms.double(0.5),
+    maxTimeSignificance = cms.double(3.5)
+  ),
+  vertexMinAngleCosine = cms.double(0.95),
+  vertexMinDLen2DSig = cms.double(2.5),
+  vertexMinDLenSig = cms.double(0.5),
+  fitterSigmacut = cms.double(3),
+  fitterTini = cms.double(256),
+  fitterRatio = cms.double(0.25),
+  useDirectVertexFitter = cms.bool(True),
+  useVertexReco = cms.bool(True),
+  vertexReco = cms.PSet(
+    finder = cms.string('avr'),
+    primcut = cms.double(1),
+    seccut = cms.double(3),
+    smoothing = cms.bool(True)
+  ),
+  mightGet = cms.optional.untracked.vstring
+)
 
 #Vertex Merger step1 https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/RecoVertex/AdaptiveVertexFinder/python/vertexMerger_cfi.py
 process.vertexMerger = cms.EDProducer( "VertexMerger",
