@@ -10,10 +10,7 @@ import FWCore.ParameterSet.Config as cms
 from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 from Configuration.Eras.Modifier_run2_nanoAOD_106Xv2_cff import run2_nanoAOD_106Xv2
 
-print("Import done")
 process = cms.Process('NANO',Run2_2018,run2_nanoAOD_106Xv2)
-print("Import done2")
-
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
@@ -27,10 +24,10 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000),
-    output = cms.untracked.int32(1000)
+    input = cms.untracked.int32(500),
+    output = cms.untracked.int32(500)
 )
-print("Max events done")
+
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring( (
@@ -62,15 +59,8 @@ process.NANOEDMAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
         #'keep *',   
     'drop *',  # Drop everything by default
     "keep *_svTable_*_*",  # Keep event-level FlatTables
-    "keep *_svtrksTable_*_*",  # Keep event-level FlatTables
-    "keep *_GVTable_*_*",
-    "keep *_GVDaughtersTable_*_*",
-    "keep nano_svTable_*_*",  # Keep event-level FlatTables
+    'keep *_genVertexProducer_*_*',
     "keep nanoaodFlatTable_*Table*_*_*",  # Keep event-level FlatTables
-    #"keep *_*_*_*",  # Keep event-level FlatTables
-    #"keep nanoaodUniqueString_nanoMetadata_*_*",  # Keep basic metadata
-    #"keep nanoaodMergeableCounterTable_*_*_*",
-    #"keep TTree_Runs_*_*",
 )
 )
 # Additional output definition
@@ -79,6 +69,11 @@ process.NANOEDMAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
 from Configuration.AlCa.GlobalTag import GlobalTag
 
 process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v16_L1v1', '')
+
+
+
+
+
 
 #
 #   START
@@ -175,7 +170,11 @@ process.mergedGenParticles = cms.EDProducer("MergedGenParticleProducer",
                                             inputPacked = cms.InputTag("packedGenParticles"),
                                             )
 process.genVertexProducer = cms.EDProducer("GenVertexProducer",
-    genParticles = cms.InputTag("mergedGenParticles")
+    genParticles = cms.InputTag("mergedGenParticles"),
+    secondaryVertices = cms.InputTag("myInclusiveSecondaryVertices"),
+    nRequiredCommonTracks = cms.int32(1),        # number of tracks required to match the genDaughters
+    dR_max = cms.double(0.03),                                   # dR between tracks and daughters to be considered matched
+    relPt_max = cms.double(0.5)                                 # dPt/pt between tracks and daughters to be considered matched
 )
 process.nanoSequenceMC += process.genVertexProducer
 
@@ -207,11 +206,7 @@ process.nanoAOD_step = cms.Path(
     process.nanoSequenceMC
     #process.svCandidateTable
 )
-#process.NANOEDMAODSIMoutput.outputCommands += [
-    #'drop *',
-    #'keep nanoaodFlatTable_SVTable_*_*',
-    #'keep nanoaodFlatTable_svCandidateTable_*_*',
-#]
+
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.NANOEDMAODSIMoutput_step = cms.EndPath(process.NANOEDMAODSIMoutput)
 

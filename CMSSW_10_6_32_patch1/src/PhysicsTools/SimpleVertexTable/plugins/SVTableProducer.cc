@@ -104,6 +104,6 @@ public:
 private:
     const edm::EDGetTokenT<std::vector<reco::Vertex>> svToken;
 };
-
+    
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(SVTableProducer);
