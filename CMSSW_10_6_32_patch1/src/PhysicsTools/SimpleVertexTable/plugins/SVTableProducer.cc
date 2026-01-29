@@ -1,7 +1,8 @@
 #include "FWCore/Framework/interface/global/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-
+#include "TLorentzVector.h"
+#include "TVector3.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/NanoAOD/interface/FlatTable.h"
 
@@ -11,6 +12,7 @@ public:
         : svToken(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("src"))) 
     {
         produces<nanoaod::FlatTable>("SVTable");
+        produces<nanoaod::FlatTable>("SVtrksTable");
     }
 
     void produce(edm::StreamID,
@@ -32,10 +34,17 @@ public:
         //}
 
         auto table = std::make_unique<nanoaod::FlatTable>(static_cast<unsigned int>(svs->size()), "mySV", false);
+        unsigned int nSVtracks = 0;
+        for (auto const& sv : *svs) {
+            nSVtracks += sv.tracksSize();
+        }
+        auto trk_table = std::make_unique<nanoaod::FlatTable>(static_cast<unsigned int>(nSVtracks), "mySVtrks", false);
 
 
-        std::vector<float> x, y, z, chi2, ndof;
+        std::vector<float> x, y, z, chi2, ndof, pt, eta, phi, mass;
+        std::vector<float> trk_pt, trk_eta, trk_phi;
         std::vector<int> nTracks;
+        std::vector<int> trk_SVidx;
 
         //std::cout<<svs->size()<<" SVs to process\n";
         for (const auto &sv : *svs) {
@@ -45,6 +54,30 @@ public:
             chi2.push_back(sv.chi2());
             ndof.push_back(sv.ndof());
             nTracks.push_back(sv.tracksSize());
+
+            TLorentzVector p4s_SV;
+            for (auto it = sv.tracks_begin(); it != sv.tracks_end(); ++it) {
+                const edm::RefToBase<reco::Track>& trkRef = *it;
+                if (trkRef.isNull()) continue;
+                TLorentzVector p4;
+                p4.SetPtEtaPhiM(trkRef->pt(),trkRef->eta(),trkRef->phi(),0.13957039);
+                trk_pt.push_back(trkRef->pt());
+                trk_eta.push_back(trkRef->eta());
+                trk_phi.push_back(trkRef->phi());
+                trk_SVidx.push_back(x.size()-1); 
+                p4s_SV += p4;
+            }
+            pt.push_back(p4s_SV.Pt());
+            eta.push_back(p4s_SV.Eta());
+            phi.push_back(p4s_SV.Phi());
+            mass.push_back(p4s_SV.M());
+
+
+            //std::cout<<"SV: x=" << sv.x() 
+            //    << " y=" << sv.y() 
+            //    << " z=" << sv.z()
+            //    << " nTracks=" << sv.tracksSize()
+            //    << " pt=" << p4s_SV.Pt();
         }
 
 
@@ -55,8 +88,17 @@ public:
         table->addColumn<float>("chi2", chi2, "Chi2 of vertex fit", nanoaod::FlatTable::FloatColumn);
         table->addColumn<float>("ndof", ndof, "Degrees of freedom of vertex fit", nanoaod::FlatTable::FloatColumn);
         table->addColumn<int>("nTracks", nTracks, "Number of tracks in SV", nanoaod::FlatTable::IntColumn);
+        table->addColumn<float>("pt", pt, "pt", nanoaod::FlatTable::FloatColumn);
+        table->addColumn<float>("eta", eta, "eta ", nanoaod::FlatTable::FloatColumn);
+        table->addColumn<float>("phi", phi, "phi", nanoaod::FlatTable::FloatColumn);
+        table->addColumn<float>("mass", mass, "mass", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_pt", trk_pt, "trk_pt", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_eta", trk_eta, "trk_eta ", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_phi", trk_phi, "trk_phi", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<int>("trk_SVidx", trk_SVidx, "trk_SVidx", nanoaod::FlatTable::IntColumn);
 
         iEvent.put(std::move(table), "SVTable");
+        iEvent.put(std::move(trk_table), "SVtrksTable");
     }
 
 private:

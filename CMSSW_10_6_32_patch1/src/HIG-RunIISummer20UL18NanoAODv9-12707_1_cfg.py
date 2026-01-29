@@ -62,6 +62,9 @@ process.NANOEDMAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
         #'keep *',   
     'drop *',  # Drop everything by default
     "keep *_svTable_*_*",  # Keep event-level FlatTables
+    "keep *_svtrksTable_*_*",  # Keep event-level FlatTables
+    "keep *_GVTable_*_*",
+    "keep *_GVDaughtersTable_*_*",
     "keep nano_svTable_*_*",  # Keep event-level FlatTables
     "keep nanoaodFlatTable_*Table*_*_*",  # Keep event-level FlatTables
     #"keep *_*_*_*",  # Keep event-level FlatTables
@@ -74,6 +77,7 @@ process.NANOEDMAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
+
 process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v16_L1v1', '')
 
 #
@@ -90,7 +94,7 @@ process.unpackedTracksAndVertices = cms.EDProducer('PATTrackAndVertexUnpacker',
     additionalTracks = cms.InputTag("lostTracks"),
     packedCandidates = cms.InputTag("packedPFCandidates")
 )
-
+# IVF parameter : https://github.com/cms-sw/cmssw/blob/55251374c7e82ee5ee7626de6248007aec863e1c/RecoVertex/AdaptiveVertexFinder/python/inclusiveVertexFinder_cfi.py#L15C1-L16C49
 process.inclusiveVertexFinder = cms.EDProducer('InclusiveVertexFinder',
   beamSpot = cms.InputTag('offlineBeamSpot'),
   primaryVertices = cms.InputTag('unpackedTracksAndVertices'),
@@ -109,7 +113,7 @@ process.inclusiveVertexFinder = cms.EDProducer('InclusiveVertexFinder',
     clusterMaxSignificance = cms.double(4.5),
     distanceRatio = cms.double(20),
     clusterMinAngleCosine = cms.double(0.5),
-    maxTimeSignificance = cms.double(3.5)
+    #maxTimeSignificance = cms.double(3.5)
   ),
   vertexMinAngleCosine = cms.double(0.95),
   vertexMinDLen2DSig = cms.double(2.5),
@@ -125,7 +129,7 @@ process.inclusiveVertexFinder = cms.EDProducer('InclusiveVertexFinder',
     seccut = cms.double(3),
     smoothing = cms.bool(True)
   ),
-  mightGet = cms.optional.untracked.vstring
+  #mightGet = cms.optional.untracked.vstring
 )
 
 #Vertex Merger step1 https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/RecoVertex/AdaptiveVertexFinder/python/vertexMerger_cfi.py
@@ -136,6 +140,7 @@ process.vertexMerger = cms.EDProducer( "VertexMerger",
 )
 
 #Arbitrator step
+# https://github.com/cms-sw/cmssw/blob/55251374c7e82ee5ee7626de6248007aec863e1c/RecoVertex/AdaptiveVertexFinder/python/trackVertexArbitrator_cfi.py#L16
 process.trackVertexArbitrator = cms.EDProducer("TrackVertexArbitrator",
     beamSpot = cms.InputTag("offlineBeamSpot"),
     primaryVertices = cms.InputTag("unpackedTracksAndVertices"),
@@ -160,23 +165,22 @@ process.myInclusiveSecondaryVertices = process.vertexMerger.clone(
     maxFraction = cms.double(0.2), 
     minSignificance = cms.double(10) )
 
-process.svTable = cms.EDProducer("SVTableProducer", src = cms.InputTag("myInclusiveSecondaryVertices") )
+process.svTable = cms.EDProducer("SVTableProducer", 
+                                 src = cms.InputTag("myInclusiveSecondaryVertices"),
+                                   )
 process.nanoSequenceMC += process.myInclusiveSecondaryVertices
 process.nanoSequenceMC += process.svTable
-#process.nanoSequence += process.svTable
-#process.myVertexTable = cms.EDProducer(
-#    "VertexTableProducer",
-#    pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices"),
-#    goodPvCut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"),
-#    svSrc = cms.InputTag("myInclusiveSecondaryVertexCandidates"),
-#    svCut = cms.string(""),
-#    dlenMin = cms.double(0),
-#    dlenSigMin = cms.double(3),
-#    pvName = cms.string("PV"),
-#    svName = cms.string("mySV"),
-#    svDoc  = cms.string("secondary vertices from custom vertexMerger"),
-#    storeCharge = cms.bool(False)
-#)
+process.mergedGenParticles = cms.EDProducer("MergedGenParticleProducer",
+                                            inputPruned = cms.InputTag("prunedGenParticles"),
+                                            inputPacked = cms.InputTag("packedGenParticles"),
+                                            )
+process.genVertexProducer = cms.EDProducer("GenVertexProducer",
+    genParticles = cms.InputTag("mergedGenParticles")
+)
+process.nanoSequenceMC += process.genVertexProducer
+
+
+
 
 
 #
@@ -193,6 +197,7 @@ from PhysicsTools.NanoAOD.common_cff import P4Vars, Var, CandVars
 
 # https://github.com/cms-sw/cmssw/blob/7507310cad2a51edad7517f124d1e8993ce0e1c8/RecoVertex/AdaptiveVertexFinder/python/inclusiveVertexing_cff.py#L7
 process.nanoAOD_step = cms.Path(
+    process.mergedGenParticles+
     process.unpackedTracksAndVertices *
     process.inclusiveVertexFinder *
     process.vertexMerger *
