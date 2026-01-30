@@ -1,0 +1,5 @@
+*.mk
+*.pyc
+CMSSW*/tmp/*
+CMSSW*/.SCRAM/**/*
+CMSSW*/lib/*

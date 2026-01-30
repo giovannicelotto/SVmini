@@ -94,7 +94,7 @@ process.inclusiveVertexFinder = cms.EDProducer('InclusiveVertexFinder',
   beamSpot = cms.InputTag('offlineBeamSpot'),
   primaryVertices = cms.InputTag('unpackedTracksAndVertices'),
   tracks = cms.InputTag('unpackedTracksAndVertices'),
-  minHits = cms.uint32(8),
+  minHits = cms.uint32(0), #8
   maximumLongitudinalImpactParameter = cms.double(0.3),
   maximumTimeSignificance = cms.double(3),
   minPt = cms.double(0.8),
@@ -104,11 +104,12 @@ process.inclusiveVertexFinder = cms.EDProducer('InclusiveVertexFinder',
     seedMax3DIPValue = cms.double(9999),
     seedMin3DIPSignificance = cms.double(1.2),
     seedMin3DIPValue = cms.double(0.005),
+
     clusterMaxDistance = cms.double(0.05),
     clusterMaxSignificance = cms.double(4.5),
-    distanceRatio = cms.double(20),
     clusterMinAngleCosine = cms.double(0.5),
-    #maxTimeSignificance = cms.double(3.5)
+    distanceRatio = cms.double(20),
+    maxTimeSignificance = cms.double(3.5)
   ),
   vertexMinAngleCosine = cms.double(0.95),
   vertexMinDLen2DSig = cms.double(2.5),

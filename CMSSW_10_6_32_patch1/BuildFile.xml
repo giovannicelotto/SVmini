@@ -1,0 +1,11 @@
+<library name="MyNanoAODModule">
+  <sources>
+  SVTableProducer.cc
+</sources>
+  <use   name="FWCore/Framework"/>
+  <use   name="DataFormats/VertexReco"/>
+  <use   name="PhysicsTools/NanoAOD/interface"/>
+  <use name="DataFormats/Common"/>
+  <use name="FWCore/ParameterSet"/>
+  <!-- other dependencies -->
+</library>
