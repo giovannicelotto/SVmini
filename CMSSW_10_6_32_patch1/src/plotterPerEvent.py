@@ -31,12 +31,13 @@ def map_to_groups_letter(value):
         return -1  # or any default value for unmatched cases
 
 # %%
-fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/HIG-RunIISummer20UL18NanoAODv9-12707.root"
+#fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/HIG-RunIISummer20UL18NanoAODv9-12707.root"
+fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/minHits0.root"
 f = uproot.open(fileName)
 tree = f["Events"]
 branches = tree.arrays()
 # %%
-ev=0
+ev=6
 nGV = branches["nGV"][ev]
 GV_x = branches["GV_x"][ev]
 GV_y = branches["GV_y"][ev]
@@ -56,7 +57,7 @@ SV_x = branches["SV_x"][ev]
 SV_y = branches["SV_y"][ev]
 SV_z = branches["SV_z"][ev]
 GV_Hadron_SVIdx = branches["GV_Hadron_SVIdx"][ev]
-# %%
+
 
 
 
@@ -100,12 +101,39 @@ ax.legend()
 #plt.close()
 
 # %%
+nGV = branches["nGV"]
+GV_x = branches["GV_x"]
+GV_y = branches["GV_y"]
+GV_z = branches["GV_z"]
+GV_x_i = branches["GV_x_i"]
+GV_y_i = branches["GV_y_i"]
+GV_z_i = branches["GV_z_i"]
+GenVtx_x = branches["GenVtx_x"]   # What is this? It is not perfectly equal to PV_x
+GenVtx_y = branches["GenVtx_y"]   # What is this? It is not perfectly equal to PV_y
+GV_Hadron_pdgId = branches["GV_Hadron_pdgId"]
 nmySV = branches["nmySV"]
+mySV_x = branches["mySV_x"]
+mySV_y = branches["mySV_y"]
+mySV_z = branches["mySV_z"]
+mySV_pt = branches["mySV_pt"]
+mySV_eta = branches["mySV_eta"]
+mySV_phi = branches["mySV_phi"]
 nSV = branches["nSV"]
+SV_x = branches["SV_x"]
+SV_y = branches["SV_y"]
+SV_z = branches["SV_z"]
+GV_Hadron_SVIdx = branches["GV_Hadron_SVIdx"]
+# %%
 fig, ax = plt.subplots(1, 1)
 xmin, xmax = -3, 5
 bins = np.linspace(xmin, xmax, xmax-xmin+1)
 ax.hist(np.clip(np.array(nmySV)+-1*np.array(nSV), bins[0], bins[-1]), bins=bins, density=True)
 ax.set_xlabel("nSV(IVF@mini) - nSV(IVF@reco)")
 ax.set_ylabel("Probability")
+# %%
+mask = (np.array(nmySV)+-1*np.array(nSV))==-1
+fig, ax  =plt.subplots(1, 1)
+bins = np.linspace(-4, 4, 101)
+ax.hist(ak.flatten(ak.Array(mySV_eta)[mask]), bins=bins, density=True)
+ax.hist(ak.flatten(mySV_eta), bins=bins, density=True)
 # %%

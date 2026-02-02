@@ -54,13 +54,16 @@ process.NANOEDMAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
         dataTier = cms.untracked.string('NANOAOD'),
         filterName = cms.untracked.string('')
     ),
-    fileName = cms.untracked.string('file:HIG-RunIISummer20UL18NanoAODv9-12707.root'),
+    fileName = cms.untracked.string('file:minHits0.root'),
     outputCommands = cms.untracked.vstring(
         #'keep *',   
     'drop *',  # Drop everything by default
     "keep *_svTable_*_*",  # Keep event-level FlatTables
     'keep *_genVertexProducer_*_*',
     "keep nanoaodFlatTable_*Table*_*_*",  # Keep event-level FlatTables
+    "keep nanoaodUniqueString_nanoMetadata_*_*",  # Keep basic metadata
+    "keep nanoaodMergeableCounterTable_*_*_*"
+
 )
 )
 # Additional output definition
@@ -164,7 +167,7 @@ process.myInclusiveSecondaryVertices = process.vertexMerger.clone(
 process.svTable = cms.EDProducer("SVTableProducer", 
                                  src = cms.InputTag("myInclusiveSecondaryVertices"),
                                    )
-process.nanoSequenceMC += process.myInclusiveSecondaryVertices
+
 process.nanoSequenceMC += process.svTable
 process.mergedGenParticles = cms.EDProducer("MergedGenParticleProducer",
                                             inputPruned = cms.InputTag("prunedGenParticles"),
@@ -202,6 +205,7 @@ process.nanoAOD_step = cms.Path(
     process.inclusiveVertexFinder *
     process.vertexMerger *
     process.trackVertexArbitrator *
+    process.myInclusiveSecondaryVertices*
     #process.myInclusiveSecondaryVertices*
     #process.svTable*
     process.nanoSequenceMC
