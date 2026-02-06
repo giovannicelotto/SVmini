@@ -35,33 +35,62 @@ public:
 
         auto table = std::make_unique<nanoaod::FlatTable>(static_cast<unsigned int>(svs->size()), "mySV", false);
         unsigned int nSVtracks = 0;
+        int nTrksCurrentSV = 0;
         for (auto const& sv : *svs) {
-            nSVtracks += sv.tracksSize();
+            nTrksCurrentSV = 0;
+            for (auto it = sv.tracks_begin(); it != sv.tracks_end(); ++it) {
+                const edm::RefToBase<reco::Track>& trkRef = *it;
+                if (trkRef.isNull()) continue;
+                double w = sv.trackWeight(trkRef);   // <-- weight comes from vertex
+                //if (w < 0.5) continue;               // skip low-weight tracks
+                nTrksCurrentSV++;
+            }
+            if (nTrksCurrentSV < 2) continue; // skip SVs with less than 2 high-weight tracks
+            nSVtracks += nTrksCurrentSV;
         }
         auto trk_table = std::make_unique<nanoaod::FlatTable>(static_cast<unsigned int>(nSVtracks), "mySVtrks", false);
 
 
         std::vector<float> x, y, z, chi2, ndof, pt, eta, phi, mass;
-        std::vector<float> trk_pt, trk_eta, trk_phi;
+        std::vector<float> trk_pt, trk_eta, trk_phi, trk_weight;
         std::vector<int> nTracks;
         std::vector<int> trk_SVidx;
 
+        int nTrksPerSV = 0;
         //std::cout<<svs->size()<<" SVs to process\n";
         for (const auto &sv : *svs) {
+            nTrksPerSV = 0;
+            // First count tracks with weight >= 0.5
+            for (auto it = sv.tracks_begin(); it != sv.tracks_end(); ++it) {
+                const edm::RefToBase<reco::Track>& trkRef = *it;
+                if (trkRef.isNull()) continue;
+                double w = sv.trackWeight(trkRef);   // <-- weight comes from vertex
+                //if (w < 0.5) continue;               // skip low-weight tracks
+                nTrksPerSV++;
+            }
+            if (nTrksPerSV < 2) continue; // skip SVs with less than 2 high-weight tracks
+
             x.push_back(sv.x());
             y.push_back(sv.y());
             z.push_back(sv.z());
             chi2.push_back(sv.chi2());
             ndof.push_back(sv.ndof());
-            nTracks.push_back(sv.tracksSize());
+            nTracks.push_back(nTrksPerSV);
+            
 
             TLorentzVector p4s_SV;
             for (auto it = sv.tracks_begin(); it != sv.tracks_end(); ++it) {
                 const edm::RefToBase<reco::Track>& trkRef = *it;
                 if (trkRef.isNull()) continue;
+                double w = sv.trackWeight(trkRef);
+                //if (w < 0.5) continue;
+
+
+
                 TLorentzVector p4;
                 p4.SetPtEtaPhiM(trkRef->pt(),trkRef->eta(),trkRef->phi(),0.13957039);
                 trk_pt.push_back(trkRef->pt());
+                trk_weight.push_back(w);
                 trk_eta.push_back(trkRef->eta());
                 trk_phi.push_back(trkRef->phi());
                 trk_SVidx.push_back(x.size()-1); 
@@ -93,13 +122,14 @@ public:
         table->addColumn<float>("phi", phi, "phi", nanoaod::FlatTable::FloatColumn);
         table->addColumn<float>("mass", mass, "mass", nanoaod::FlatTable::FloatColumn);
         trk_table->addColumn<float>("trk_pt", trk_pt, "trk_pt", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_weight", trk_weight, "trk_weight", nanoaod::FlatTable::FloatColumn);
         trk_table->addColumn<float>("trk_eta", trk_eta, "trk_eta ", nanoaod::FlatTable::FloatColumn);
         trk_table->addColumn<float>("trk_phi", trk_phi, "trk_phi", nanoaod::FlatTable::FloatColumn);
         trk_table->addColumn<int>("trk_SVidx", trk_SVidx, "trk_SVidx", nanoaod::FlatTable::IntColumn);
 
         iEvent.put(std::move(table), "SVTable");
         iEvent.put(std::move(trk_table), "SVtrksTable");
-    }
+    } 
 
 private:
     const edm::EDGetTokenT<std::vector<reco::Vertex>> svToken;
