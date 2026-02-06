@@ -103,12 +103,3 @@ svCandidateTable =  cms.EDProducer("SimpleCandidateFlatTableProducer",
     ),
 )
 
-# Sequence
-candidateSecondaryVertexSequence = cms.Sequence(
-    inclusiveCandidateVertexFinder *
-    candidateVertexMerger *
-    CandidateVertexArbitrator *
-    myCandidateInclusiveSecondaryVertices*
-    myvertexTable *
-    svCandidateTable
-)
