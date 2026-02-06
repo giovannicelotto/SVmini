@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 import math, sys
 import awkward as ak
-import random
-from scipy.optimize import linear_sum_assignment
 import mplhep as hep
 hep.style.use("CMS")
 #from tuplizer.utilsForScript import distance_3d, getPdgMask
@@ -32,7 +30,7 @@ def map_to_groups_letter(value):
 
 # %%
 #fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/HIG-RunIISummer20UL18NanoAODv9-12707.root"
-fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/minHits0.root"
+fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/withoutCut.root"
 f = uproot.open(fileName)
 tree = f["Events"]
 branches = tree.arrays()
@@ -127,13 +125,22 @@ GV_Hadron_SVIdx = branches["GV_Hadron_SVIdx"]
 fig, ax = plt.subplots(1, 1)
 xmin, xmax = -3, 5
 bins = np.linspace(xmin, xmax, xmax-xmin+1)
-ax.hist(np.clip(np.array(nmySV)+-1*np.array(nSV), bins[0], bins[-1]), bins=bins, density=True)
+values = np.clip(np.array(nmySV) +-1*np.array(nSV), bins[0], bins[-1])
+
+counts, edges, patches = ax.hist(values, bins=bins-0.5, density=False, edgecolor='black')
+for count, edge in zip(counts, edges[:-1]):
+    if count > 0:
+        ax.text(edge + 0.5*(edges[1]-edges[0]), count, f'{int(count)}',
+                ha='center', va='bottom', fontsize=18)
 ax.set_xlabel("nSV(IVF@mini) - nSV(IVF@reco)")
-ax.set_ylabel("Probability")
+ax.set_ylabel("Counts")  # switched to counts, since density=False
+plt.show()
 # %%
-mask = (np.array(nmySV)+-1*np.array(nSV))==-1
-fig, ax  =plt.subplots(1, 1)
-bins = np.linspace(-4, 4, 101)
-ax.hist(ak.flatten(ak.Array(mySV_eta)[mask]), bins=bins, density=True)
-ax.hist(ak.flatten(mySV_eta), bins=bins, density=True)
+fig, ax = plt.subplots(1, 1)
+counts, edges, patches = ax.hist(ak.flatten(branches["mySVtrks_trk_weight"]),bins=np.linspace(0, 1, 10),density=False, edgecolor='black')
+for count, edge in zip(counts, edges[:-1]):
+    if count > 0:
+        ax.text(edge + 0.5*(edges[1]-edges[0]), count, f'{int(count)}',
+                ha='center', va='bottom', fontsize=18)
+ax.set_xlabel("Track weight in SV (IVF@mini)")
 # %%

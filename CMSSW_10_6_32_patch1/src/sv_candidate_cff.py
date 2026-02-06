@@ -69,8 +69,11 @@ myCandidateInclusiveSecondaryVertices = candidateVertexMerger.clone(
     secondaryVertices = "CandidateVertexArbitrator",
     maxFraction = cms.double(0.2), 
     minSignificance = cms.double(10) )
-
-vertexTable = cms.EDProducer("VertexTableProducer",
+#mySlimmedSecondaryVertices = cms.EDProducer("PATSecondaryVertexSlimmer",
+#    src = cms.InputTag("myCandidateInclusiveSecondaryVertices"),
+#    packedPFCandidates = cms.InputTag("packedPFCandidates")
+#)
+myvertexTable = cms.EDProducer("VertexTableProducer",
     pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices"),
     goodPvCut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"), 
     svSrc = cms.InputTag("myCandidateInclusiveSecondaryVertices"),
@@ -80,11 +83,11 @@ vertexTable = cms.EDProducer("VertexTableProducer",
     storeCharge=cms.bool(False),
     pvName = cms.string("myPV"),
     svName = cms.string("mySV"),
-    svDoc  = cms.string("secondary vertices from IVF algorithm"),
+    svDoc  = cms.string("secondary vertices from custom IVF algorithm"),
 )
 
 svCandidateTable =  cms.EDProducer("SimpleCandidateFlatTableProducer",
-    src = cms.InputTag("vertexTable"),
+    src = cms.InputTag("myvertexTable"),
     cut = cms.string(""),  #DO NOT further cut here, use vertexTable.svCut
     name = cms.string("mySV"),
     svDoc = cms.string("candidate SVs"),
@@ -106,6 +109,6 @@ candidateSecondaryVertexSequence = cms.Sequence(
     candidateVertexMerger *
     CandidateVertexArbitrator *
     myCandidateInclusiveSecondaryVertices*
-    vertexTable *
+    myvertexTable *
     svCandidateTable
 )

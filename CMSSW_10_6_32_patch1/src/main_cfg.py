@@ -113,12 +113,12 @@ process.genVertexProducer = genVertexProducer
 
 
 
-from sv_candidate_cff import inclusiveCandidateVertexFinder, candidateVertexMerger, CandidateVertexArbitrator, myCandidateInclusiveSecondaryVertices, vertexTable, svCandidateTable
+from sv_candidate_cff import inclusiveCandidateVertexFinder, candidateVertexMerger, CandidateVertexArbitrator, myCandidateInclusiveSecondaryVertices, myvertexTable, svCandidateTable
 process.inclusiveCandidateVertexFinder = inclusiveCandidateVertexFinder
 process.candidateVertexMerger = candidateVertexMerger
 process.CandidateVertexArbitrator = CandidateVertexArbitrator
 process.myCandidateInclusiveSecondaryVertices = myCandidateInclusiveSecondaryVertices
-process.vertexTable = vertexTable
+process.myvertexTable = myvertexTable
 process.svCandidateTable = svCandidateTable
 
 
@@ -136,7 +136,7 @@ process.nanoAOD_step = cms.Path(
     process.candidateVertexMerger *
     process.CandidateVertexArbitrator *
     process.myCandidateInclusiveSecondaryVertices *
-    process.vertexTable *
+    process.myvertexTable *
     process.svCandidateTable *
     process.genVertexProducer 
 
