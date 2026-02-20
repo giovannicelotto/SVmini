@@ -30,10 +30,15 @@ def map_to_groups_letter(value):
 
 # %%
 #fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/HIG-RunIISummer20UL18NanoAODv9-12707.root"
-fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/withoutCut.root"
+fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/custom.root"
 f = uproot.open(fileName)
 tree = f["Events"]
 branches = tree.arrays()
+
+fileName_central = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/central.root"
+f_central = uproot.open(fileName_central)
+tree_central = f_central["Events"]
+branches_central = tree_central.arrays()
 # %%
 ev=6
 nGV = branches["nGV"][ev]
@@ -43,20 +48,30 @@ GV_z = branches["GV_z"][ev]
 GV_x_i = branches["GV_x_i"][ev]
 GV_y_i = branches["GV_y_i"][ev]
 GV_z_i = branches["GV_z_i"][ev]
-GenVtx_x = branches["GenVtx_x"][ev]   # What is this? It is not perfectly equal to PV_x
-GenVtx_y = branches["GenVtx_y"][ev]   # What is this? It is not perfectly equal to PV_y
+#GenVtx_x = branches["GenVtx_x"][ev]   # What is this? It is not perfectly equal to PV_x
+#GenVtx_y = branches["GenVtx_y"][ev]   # What is this? It is not perfectly equal to PV_y
 GV_Hadron_pdgId = branches["GV_Hadron_pdgId"][ev]
 nmySV = branches["nmySV"][ev]
 mySV_x = branches["mySV_x"][ev]
 mySV_y = branches["mySV_y"][ev]
 mySV_z = branches["mySV_z"][ev]
-nSV = branches["nSV"][ev]
-SV_x = branches["SV_x"][ev]
-SV_y = branches["SV_y"][ev]
-SV_z = branches["SV_z"][ev]
+
 GV_Hadron_SVIdx = branches["GV_Hadron_SVIdx"][ev]
 
-
+GenVtx_x = branches_central["GenVtx_x"][ev]   # What is this? It is not perfectly equal to PV_x
+GenVtx_y = branches_central["GenVtx_y"][ev]   # What is this? It is not perfectly equal to PV_y
+GV_Hadron_pdgId = branches["GV_Hadron_pdgId"][ev]
+nmySV = branches["nmySV"][ev]
+mySV_x = branches["mySV_x"][ev]
+mySV_y = branches["mySV_y"][ev]
+mySV_z = branches["mySV_z"][ev]
+mySV_pt = branches["mySV_pt"][ev]
+mySV_eta = branches["mySV_eta"][ev]
+mySV_phi = branches["mySV_phi"][ev]
+nSV = branches_central["nSV"][ev]
+SV_x = branches_central["SV_x"][ev]
+SV_y = branches_central["SV_y"][ev]
+SV_z = branches_central["SV_z"][ev]
 
 
 # matching is done
@@ -99,28 +114,9 @@ ax.legend()
 #plt.close()
 
 # %%
-nGV = branches["nGV"]
-GV_x = branches["GV_x"]
-GV_y = branches["GV_y"]
-GV_z = branches["GV_z"]
-GV_x_i = branches["GV_x_i"]
-GV_y_i = branches["GV_y_i"]
-GV_z_i = branches["GV_z_i"]
-GenVtx_x = branches["GenVtx_x"]   # What is this? It is not perfectly equal to PV_x
-GenVtx_y = branches["GenVtx_y"]   # What is this? It is not perfectly equal to PV_y
-GV_Hadron_pdgId = branches["GV_Hadron_pdgId"]
-nmySV = branches["nmySV"]
-mySV_x = branches["mySV_x"]
-mySV_y = branches["mySV_y"]
-mySV_z = branches["mySV_z"]
-mySV_pt = branches["mySV_pt"]
-mySV_eta = branches["mySV_eta"]
-mySV_phi = branches["mySV_phi"]
-nSV = branches["nSV"]
-SV_x = branches["SV_x"]
-SV_y = branches["SV_y"]
-SV_z = branches["SV_z"]
-GV_Hadron_SVIdx = branches["GV_Hadron_SVIdx"]
+
+
+
 # %%
 fig, ax = plt.subplots(1, 1)
 xmin, xmax = -3, 5

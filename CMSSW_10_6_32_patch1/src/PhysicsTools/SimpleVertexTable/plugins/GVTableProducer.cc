@@ -9,6 +9,10 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "TLorentzVector.h"
+#include "RecoVertex/VertexTools/interface/VertexDistance3D.h"
+#include "RecoVertex/VertexTools/interface/VertexDistanceXY.h"
+#include "RecoVertex/VertexPrimitives/interface/ConvertToFromReco.h"
+#include "RecoVertex/VertexPrimitives/interface/VertexState.h"
 
 #include <vector>
 #include <unordered_set>
@@ -43,7 +47,7 @@ private:
     double dR_max,
     double relPt_max
 );
-
+    const edm::EDGetTokenT<std::vector<reco::Vertex>> pvs_;
     edm::EDGetTokenT<edm::View<reco::Candidate>> genToken_;
     edm::EDGetTokenT<std::vector<reco::Vertex>> svToken_;
     int nRequiredCommonTracks_;
@@ -53,6 +57,7 @@ private:
 
 
 GenVertexProducer::GenVertexProducer(const edm::ParameterSet& iConfig):
+    pvs_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
     genToken_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("genParticles"))),
     svToken_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("secondaryVertices"))),
     nRequiredCommonTracks_(iConfig.getParameter<int>("nRequiredCommonTracks")),
@@ -71,6 +76,7 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         iEvent.getByToken(genToken_, genHandle);
         edm::Handle<std::vector<reco::Vertex>> svHandle;
         iEvent.getByToken(svToken_, svHandle);
+        auto pvsIn = iEvent.getHandle(pvs_);
 
         
 
@@ -87,12 +93,17 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         std::vector<int> Hadron_pdgId;
         std::vector<float> Daughters_pt, Daughters_eta, Daughters_phi;
         std::vector<int> Daughters_charge, Daughters_GVidx;
+        VertexDistance3D vdist;
+        const auto& PV0 = pvsIn->front();
 
         // save coordinates of SV (will be used for matching with GV)
         for (auto const& sv : *secondaryVertices) {
-            SV_x.push_back(sv.x());
-            SV_y.push_back(sv.y());
-            SV_z.push_back(sv.z());
+            Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
+            if (dl.value() > 0 and dl.significance() > 3) {
+                SV_x.push_back(sv.x());
+                SV_y.push_back(sv.y());
+                SV_z.push_back(sv.z());
+            }
         }
 
         // Filling Hadrons and Daughters vectors
@@ -170,6 +181,8 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         std::vector<int> SVtrk_SVidx;
         int SV_index=0;
         for (const auto &sv : *secondaryVertices) {
+            Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
+            if (dl.value() > 0 and dl.significance() > 3) {
             for (auto it = sv.tracks_begin(); it != sv.tracks_end(); ++it) {
                 const edm::RefToBase<reco::Track>& trkRef = *it;
                 if (trkRef.isNull()) continue;
@@ -181,11 +194,12 @@ void GenVertexProducer::produce(edm::Event& iEvent,
                 SVtrk_SVidx.push_back(SV_index); 
             }
             SV_index++;
+            }
         }
         
         // Compute matrix of distances between SV and GV
         auto distances = computeDistanceMatrix(SV_x, SV_y, SV_z, Hadron_GVx, Hadron_GVy, Hadron_GVz);
-        printDistanceMatrix(distances);
+        //printDistanceMatrix(distances);
         
         std::vector<int> Hadron_SVIdx(ngv, -1); // 
         std::vector<float> Hadron_SVDistance(ngv, -1); // 

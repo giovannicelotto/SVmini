@@ -10,6 +10,10 @@
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "TLorentzVector.h"
 #include "DataFormats/Candidate/interface/VertexCompositePtrCandidate.h"
+#include "RecoVertex/VertexTools/interface/VertexDistance3D.h"
+#include "RecoVertex/VertexTools/interface/VertexDistanceXY.h"
+#include "RecoVertex/VertexPrimitives/interface/ConvertToFromReco.h"
+#include "RecoVertex/VertexPrimitives/interface/VertexState.h"
 #include <vector>
 #include <unordered_set>
 #include <limits>
@@ -32,18 +36,19 @@ private:
                     const std::vector<float>& Hadron_GVx,const std::vector<float>& Hadron_GVy,const std::vector<float>& Hadron_GVz);
     void printDistanceMatrix(const std::vector<std::vector<float>>& distances);
     std::pair<std::vector<int>, std::vector<float>>  matchHadronsToSV(
-    std::vector<std::vector<float>> distances,
-    const std::vector<float>& SVtrk_pt, const std::vector<float>& SVtrk_eta, const std::vector<float>& SVtrk_phi, const std::vector<int>& SVtrk_SVidx,
-    const std::vector<float>& Daughters_pt,     //genparticles
-    const std::vector<float>& Daughters_eta,  //genparticles
-    const std::vector<float>& Daughters_phi,  //genparticles
-    const std::vector<int>& Daughters_GVidx, // hadron index per daughter
-    int n_Hadrons,
-    int nRequiredCommonTracks,
-    double dR_max,
-    double relPt_max
-);
+                std::vector<std::vector<float>> distances,
+                const std::vector<float>& SVtrk_pt, const std::vector<float>& SVtrk_eta, const std::vector<float>& SVtrk_phi, const std::vector<int>& SVtrk_SVidx,
+                const std::vector<float>& Daughters_pt,     //genparticles
+                const std::vector<float>& Daughters_eta,  //genparticles
+                const std::vector<float>& Daughters_phi,  //genparticles
+                const std::vector<int>& Daughters_GVidx, // hadron index per daughter
+                int n_Hadrons,
+                int nRequiredCommonTracks,
+                double dR_max,
+                double relPt_max
+            );
 
+    const edm::EDGetTokenT<std::vector<reco::Vertex>> pvs_;
     edm::EDGetTokenT<edm::View<reco::Candidate>> genToken_;
     edm::EDGetTokenT<std::vector<reco::VertexCompositePtrCandidate>> svToken_;
     int nRequiredCommonTracks_;
@@ -53,6 +58,7 @@ private:
 
 
 GenVertexCandidateProducer::GenVertexCandidateProducer(const edm::ParameterSet& iConfig):
+    pvs_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
     genToken_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("genParticles"))),
     svToken_(consumes<std::vector<reco::VertexCompositePtrCandidate>>(iConfig.getParameter<edm::InputTag>("secondaryVertices"))),
     nRequiredCommonTracks_(iConfig.getParameter<int>("nRequiredCommonTracks")),
@@ -71,6 +77,7 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         iEvent.getByToken(genToken_, genHandle);
         edm::Handle<std::vector<reco::VertexCompositePtrCandidate>> svHandle;
         iEvent.getByToken(svToken_, svHandle);
+        auto pvsIn = iEvent.getHandle(pvs_);
 
         
 
@@ -87,12 +94,16 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         std::vector<int> Hadron_pdgId;
         std::vector<float> Daughters_pt, Daughters_eta, Daughters_phi;
         std::vector<int> Daughters_charge, Daughters_GVidx;
-
+        VertexDistance3D vdist;
+        const auto& PV0 = pvsIn->front();
         // save coordinates of SV (will be used for matching with GV)
         for (auto const& sv : *secondaryVertices) {
+            Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
+            if (dl.value() > 0 and dl.significance() > 3) {
             SV_x.push_back(sv.position().x());
             SV_y.push_back(sv.position().y());
             SV_z.push_back(sv.position().z());
+            }
         }
 
         // Filling Hadrons and Daughters vectors
@@ -168,8 +179,16 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         // Filling tracks from reco SV
         std::vector<float> SVtrk_pt, SVtrk_eta, SVtrk_phi;
         std::vector<int> SVtrk_SVidx;
+        
+        
         int SV_index=0;
         for (const auto &sv : *secondaryVertices) {
+            Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
+            if (dl.value() > 0 and dl.significance() > 3) {
+        
+        
+
+
             for (size_t i = 0; i < sv.numberOfDaughters(); ++i) {
                  const reco::Candidate* dau = sv.daughter(i);
                  if(dau->charge()==0) continue; // only charged tracks
@@ -183,6 +202,7 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
                 SVtrk_SVidx.push_back(SV_index); 
             }
             SV_index++;
+            }
         }
         
         // Compute matrix of distances between SV and GV

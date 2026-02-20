@@ -19,6 +19,11 @@ options = VarParsing('python')
 #    VarParsing.varType.string,
 #    "output Name"
 #)
+options.register('collection', "candidate",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "collection chosen"
+)
 options.parseArguments()
 print(options)
 # import of standard configurations
@@ -32,6 +37,7 @@ process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('PhysicsTools.NanoAOD.nano_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(500),
@@ -56,7 +62,14 @@ process.configurationMetadata = cms.untracked.PSet(
 )
 
 # Output definition
-processName = "outputBTV.root" if options.outputFile=="" else options.outputFile
+
+if options.outputFile=="output.root":
+    if options.collection=="":
+        processName = "outputBTV.root" 
+    else:
+        processName = options.collection+".root"
+else:
+    processName = options.outputFile
 process.NANOEDMAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
     compressionAlgorithm = cms.untracked.string('LZMA'),
     compressionLevel = cms.untracked.int32(9),
@@ -71,6 +84,9 @@ process.NANOEDMAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
     "keep *_svTable_*_*",  # Keep event-level FlatTables
     "keep *_svCandidateTable_*_*",  # Keep event-level FlatTables
     'keep *_genVertexProducer_*_*',
+    "keep *_gvProducer_*_*",
+    "keep *_gvCentralProducer_*_*",
+    "keep *_genCandidateVertexProducer_*_*",
     "keep nanoaodFlatTable_*Table*_*_*",  # Keep event-level FlatTables
     "keep nanoaodUniqueString_nanoMetadata_*_*",  # Keep basic metadata
     "keep nanoaodMergeableCounterTable_*_*_*"
@@ -102,51 +118,41 @@ process.load("RecoVertex.AdaptiveVertexFinder.inclusiveVertexing_cff")
 
 
 
-#process.nanoSequenceMC += process.svTable
+
+
+
 from mergedGenParticles import mergedGenParticles
 process.mergedGenParticles = mergedGenParticles
 
 
-from genVertices import genVertexProducer
-process.genVertexProducer = genVertexProducer
-#process.nanoSequenceMC += process.genVertexProducer
 
 
-
-from sv_candidate_cff import inclusiveCandidateVertexFinder, candidateVertexMerger, CandidateVertexArbitrator, myCandidateInclusiveSecondaryVertices, myvertexTable, svCandidateTable
-process.inclusiveCandidateVertexFinder = inclusiveCandidateVertexFinder
-process.candidateVertexMerger = candidateVertexMerger
-process.CandidateVertexArbitrator = CandidateVertexArbitrator
-process.myCandidateInclusiveSecondaryVertices = myCandidateInclusiveSecondaryVertices
-process.myvertexTable = myvertexTable
-process.svCandidateTable = svCandidateTable
+from genVertices import custom_GV_producer
+from sv_candidate_cff import custom_sv_candidate #inclusiveCandidateVertexFinder, candidateVertexMerger, CandidateVertexArbitrator, myCandidateInclusiveSecondaryVertices, myvertexTable, svCandidateTable, slimmedSecondaryVertices
+from sv_reco_cff import custom_sv_tracks
+process = custom_GV_producer(process, collection=options.collection)
 
 
-
-
-
-
-
-
-
-
-process.nanoAOD_step = cms.Path(
-    process.mergedGenParticles+
-    process.inclusiveCandidateVertexFinder *
-    process.candidateVertexMerger *
-    process.CandidateVertexArbitrator *
-    process.myCandidateInclusiveSecondaryVertices *
-    process.myvertexTable *
-    process.svCandidateTable *
-    process.genVertexProducer 
-
-    #process.nanoSequenceMC
-)
-
-
-
-
-
+print(options.collection)
+if options.collection=="candidate":
+    process = custom_sv_candidate(process)
+    process.nanoAOD_step = cms.Path(
+                                process.mergedGenParticles+
+                                process.sv_candidate*
+                                process.genVertexProducer_sequence )
+elif options.collection=="track":
+    process = custom_sv_tracks(process)
+    process.nanoAOD_step = cms.Path(
+                                process.mergedGenParticles+
+                                process.sv_track*
+                                process.genVertexProducer_sequence )
+elif options.collection=="central":
+    process.nanoAOD_step = cms.Path(
+                                process.mergedGenParticles+
+                                process.nanoSequenceMC*
+                                process.genVertexProducer_sequence )
+else:
+    print("No optinos chosen")
 
 
 
