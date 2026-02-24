@@ -6,4 +6,6 @@ CMSSW*/lib/*
 PAT*
 *.root
 *.png
-*.nfs
+.nfs*
+*.pl
+.scram
