@@ -3,3 +3,7 @@
 CMSSW*/tmp/*
 CMSSW*/.SCRAM/**/*
 CMSSW*/lib/*
+PAT*
+*.root
+*.png
+*.nfs
