@@ -19,6 +19,14 @@
 #include <limits>
 #include <tuple>
 #include <cmath>
+    std::vector<int> pdgList_B = {521,511,531,541,5122,5132,5232,5332,5142,5242,5342,5512,5532,5542,5554};
+    std::vector<int> pdgList_D = {411,421,431,4122,4232,4132,4332,4412,4422,4432,4444};
+    std::vector<int> pdgList_S = {3122,3222,3212,3312,3322,3334};
+    std::vector<int> pdgList_Tau = {15};
+    std::unordered_set<int> pdgSet_D(pdgList_D.begin(), pdgList_D.end());
+    std::unordered_set<int> pdgSet_B(pdgList_B.begin(), pdgList_B.end());
+    std::unordered_set<int> pdgSet_S(pdgList_S.begin(), pdgList_S.end());
+    std::unordered_set<int> pdgSet_Tau(pdgList_Tau.begin(), pdgList_Tau.end());
 class GenVertexCandidateProducer : public edm::stream::EDProducer<> {
 public:
     explicit GenVertexCandidateProducer(const edm::ParameterSet&);
@@ -26,7 +34,6 @@ public:
     void produce(edm::Event&, const edm::EventSetup&) override;
 
 private:
-
     int checkPDG(int abs_pdg) const;
 
     std::optional<std::tuple<float, float, float>>isAncestor(const reco::Candidate* mother,const reco::Candidate* daughter) const;
@@ -52,6 +59,7 @@ private:
     edm::EDGetTokenT<edm::View<reco::Candidate>> genToken_;
     edm::EDGetTokenT<std::vector<reco::VertexCompositePtrCandidate>> svToken_;
     int nRequiredCommonTracks_;
+    double dlenSigMin_;
     double dR_max_;
     double relPt_max_;
 };
@@ -62,11 +70,13 @@ GenVertexCandidateProducer::GenVertexCandidateProducer(const edm::ParameterSet& 
     genToken_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("genParticles"))),
     svToken_(consumes<std::vector<reco::VertexCompositePtrCandidate>>(iConfig.getParameter<edm::InputTag>("secondaryVertices"))),
     nRequiredCommonTracks_(iConfig.getParameter<int>("nRequiredCommonTracks")),
+    dlenSigMin_(iConfig.getParameter<double>("dlenSigMin")),
     dR_max_(iConfig.getParameter<double>("dR_max")),
     relPt_max_(iConfig.getParameter<double>("relPt_max"))
 {
     produces<nanoaod::FlatTable>("GVTable");
     produces<nanoaod::FlatTable>("GVDaughtersTable");
+    produces<nanoaod::FlatTable>("SVDaughtersTable");
 }
 
 
@@ -91,6 +101,7 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         std::vector<float> SV_x, SV_y, SV_z;
         std::vector<float> Hadron_GVx, Hadron_GVy, Hadron_GVz;
         std::vector<float>  Hadron_GVx_i, Hadron_GVy_i, Hadron_GVz_i;
+        std::vector<int> Hadron_pdgClass, Hadron_isB, Hadron_isD;
         std::vector<int> Hadron_pdgId;
         std::vector<float> Daughters_pt, Daughters_eta, Daughters_phi;
         std::vector<int> Daughters_charge, Daughters_GVidx;
@@ -99,7 +110,7 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         // save coordinates of SV (will be used for matching with GV)
         for (auto const& sv : *secondaryVertices) {
             Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
-            if (dl.value() > 0 and dl.significance() > 3) {
+            if (dl.value() > 0 and dl.significance() > dlenSigMin_) {
             SV_x.push_back(sv.position().x());
             SV_y.push_back(sv.position().y());
             SV_z.push_back(sv.position().z());
@@ -155,10 +166,26 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
 
                 // Save GenVertex
                 ngv++;
-                if(hadPDG==1) ngv_b++;
-                if(hadPDG==2) ngv_d++;
-                if(hadPDG==3) ngv_s++;
-                if(hadPDG==4) ngv_tau++;
+                if(hadPDG==1) {
+                    ngv_b++;
+                    Hadron_isB.push_back(1);
+                    }
+                else{
+                    Hadron_isB.push_back(0);
+                }
+                if(hadPDG==2) {
+                    ngv_d++;
+                    Hadron_isD.push_back(1);
+                    }
+                else{
+                    Hadron_isD.push_back(0);
+                }
+                if(hadPDG==3) {
+                    ngv_s++;
+                    }
+                if(hadPDG==4) {
+                    ngv_tau++;
+                    }
                 Hadron_GVx.push_back(vx);               // point of decay of the hadron
                 Hadron_GVy.push_back(vy);               // point of decay of the hadron
                 Hadron_GVz.push_back(vz);               // point of decay of the hadron
@@ -184,7 +211,7 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         int SV_index=0;
         for (const auto &sv : *secondaryVertices) {
             Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
-            if (dl.value() > 0 and dl.significance() > 3) {
+            if (dl.value() > 0 and dl.significance() > dlenSigMin_) {
         
         
 
@@ -207,7 +234,7 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         
         // Compute matrix of distances between SV and GV
         auto distances = computeDistanceMatrix(SV_x, SV_y, SV_z, Hadron_GVx, Hadron_GVy, Hadron_GVz);
-        printDistanceMatrix(distances);
+        //printDistanceMatrix(distances);
         
         std::vector<int> Hadron_SVIdx(ngv, -1); // 
         std::vector<float> Hadron_SVDistance(ngv, -1); // 
@@ -240,6 +267,11 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         gvTable->addColumn<float>("z_i",Hadron_GVz_i,"Born z coordinate of GV ", nanoaod::FlatTable::FloatColumn);
         gvTable->addColumn<int>("Hadron_SVIdx",Hadron_SVIdx,"SVIdx", nanoaod::FlatTable::IntColumn);
         gvTable->addColumn<int>("Hadron_pdgId",Hadron_pdgId,"Hadron_pdgId", nanoaod::FlatTable::IntColumn);
+        // new class
+        gvTable->addColumn<int>("isB",Hadron_isB,"isB", nanoaod::FlatTable::IntColumn);
+        gvTable->addColumn<int>("isD",Hadron_isD,"isD", nanoaod::FlatTable::IntColumn);
+        gvTable->addColumn<int>("pdgClass",Hadron_pdgId,"pdgClass", nanoaod::FlatTable::IntColumn);
+        
         
         //
 
@@ -249,12 +281,20 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         dauTable->addColumn<float>("phi",Daughters_phi,"Daughter phi",nanoaod::FlatTable::FloatColumn);
         dauTable->addColumn<int>("charge",Daughters_charge,"Daughter charge", nanoaod::FlatTable::IntColumn);
         dauTable->addColumn<int>("hadronIndex",Daughters_GVidx,"Hadron index", nanoaod::FlatTable::IntColumn);
-        //dauTable->addColumn<int>("hadronFlav",Daughters_flav,"Hadron flavor", nanoaod::FlatTable::IntColumn);
+
+
+        auto svdauTable = std::make_unique<nanoaod::FlatTable>(SVtrk_pt.size(),"SVDaughters",false);
+        svdauTable->addColumn<float>("pt",SVtrk_pt,"Daughter pt",nanoaod::FlatTable::FloatColumn);
+        svdauTable->addColumn<float>("eta",SVtrk_eta,"Daughter eta",nanoaod::FlatTable::FloatColumn);
+        svdauTable->addColumn<float>("phi",SVtrk_phi,"Daughter phi",nanoaod::FlatTable::FloatColumn);
+        //svdauTable->addColumn<int>("charge",SVtrk_charge,"Daughter charge", nanoaod::FlatTable::IntColumn);
+        svdauTable->addColumn<int>("SVIdx",SVtrk_SVidx,"Hadron index", nanoaod::FlatTable::IntColumn);
 
 
         //
         iEvent.put(std::move(gvTable),"GVTable");
         iEvent.put(std::move(dauTable),"GVDaughtersTable");
+        iEvent.put(std::move(svdauTable),"SVDaughtersTable");
     }
 
 
@@ -264,10 +304,6 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
 
 //  checkPDG() 
 int GenVertexCandidateProducer::checkPDG(int abs_pdg) const {
-    std::vector<int> pdgList_B = {521,511,531,541,5122,5132,5232,5332,5142,5242,5342,5512,5532,5542,5554};
-    std::vector<int> pdgList_D = {411,421,431,4122,4232,4132,4332,4412,4422,4432,4444};
-    std::vector<int> pdgList_S = {3122,3222,3212,3312,3322,3334};
-    std::vector<int> pdgList_Tau = {15};
 
     if(std::find(pdgList_B.begin(),pdgList_B.end(),abs_pdg)!=pdgList_B.end()) return 1;
     if(std::find(pdgList_D.begin(),pdgList_D.end(),abs_pdg)!=pdgList_D.end()) return 2;
@@ -280,9 +316,10 @@ int GenVertexCandidateProducer::checkPDG(int abs_pdg) const {
 
 //  isAncestor() 
 std::optional<std::tuple<float, float, float>> GenVertexCandidateProducer::isAncestor(const reco::Candidate* ancestor, const reco::Candidate* particle) const
+// ancestor: Candidate Object of the Mother
+// particle: Candidate object of the particle that can be daughter
     {
     const reco::Candidate* current = particle;
-    //const reco::Candidate* child = nullptr;
 
     while (current != nullptr && current->numberOfMothers() > 0) {
         const reco::Candidate* mother = current->mother(0);
@@ -290,9 +327,14 @@ std::optional<std::tuple<float, float, float>> GenVertexCandidateProducer::isAnc
             // Found the ancestor; return the vertex of the current particle (i.e., the direct daughter)
             return std::make_optional(std::make_tuple(current->vx(), current->vy(), current->vz()));
         }
-        //child = current;
+        int mother_pdg = std::abs(mother->pdgId());
+        if (pdgSet_B.count(mother_pdg) || pdgSet_D.count(mother_pdg) || pdgSet_S.count(mother_pdg) || pdgSet_Tau.count(mother_pdg)) break;
         current = mother;
     }
+
+
+
+
 
     // If we reached here, the ancestor was not found in the chain
     return std::nullopt;

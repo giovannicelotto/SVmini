@@ -19,10 +19,10 @@
 #include <limits>
 #include <tuple>
 #include <cmath>
+
 class GenVertexProducer : public edm::stream::EDProducer<> {
 public:
     explicit GenVertexProducer(const edm::ParameterSet&);
-
     void produce(edm::Event&, const edm::EventSetup&) override;
 
 private:
@@ -36,21 +36,22 @@ private:
                     const std::vector<float>& Hadron_GVx,const std::vector<float>& Hadron_GVy,const std::vector<float>& Hadron_GVz);
     void printDistanceMatrix(const std::vector<std::vector<float>>& distances);
     std::pair<std::vector<int>, std::vector<float>>  matchHadronsToSV(
-    std::vector<std::vector<float>> distances,
-    const std::vector<float>& SVtrk_pt, const std::vector<float>& SVtrk_eta, const std::vector<float>& SVtrk_phi, const std::vector<int>& SVtrk_SVidx,
-    const std::vector<float>& Daughters_pt,     //genparticles
-    const std::vector<float>& Daughters_eta,  //genparticles
-    const std::vector<float>& Daughters_phi,  //genparticles
-    const std::vector<int>& Daughters_GVidx, // hadron index per daughter
-    int n_Hadrons,
-    int nRequiredCommonTracks,
-    double dR_max,
-    double relPt_max
-);
+                                                                        std::vector<std::vector<float>> distances,
+                                                                        const std::vector<float>& SVtrk_pt, const std::vector<float>& SVtrk_eta, const std::vector<float>& SVtrk_phi, const std::vector<int>& SVtrk_SVidx,
+                                                                        const std::vector<float>& Daughters_pt,     //genparticles
+                                                                        const std::vector<float>& Daughters_eta,  //genparticles
+                                                                        const std::vector<float>& Daughters_phi,  //genparticles
+                                                                        const std::vector<int>& Daughters_GVidx, // hadron index per daughter
+                                                                        int n_Hadrons,
+                                                                        int nRequiredCommonTracks,
+                                                                        double dR_max,
+                                                                        double relPt_max
+                                                                    );
     const edm::EDGetTokenT<std::vector<reco::Vertex>> pvs_;
     edm::EDGetTokenT<edm::View<reco::Candidate>> genToken_;
     edm::EDGetTokenT<std::vector<reco::Vertex>> svToken_;
     int nRequiredCommonTracks_;
+    double dlenSigMin_;
     double dR_max_;
     double relPt_max_;
 };
@@ -61,6 +62,7 @@ GenVertexProducer::GenVertexProducer(const edm::ParameterSet& iConfig):
     genToken_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("genParticles"))),
     svToken_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("secondaryVertices"))),
     nRequiredCommonTracks_(iConfig.getParameter<int>("nRequiredCommonTracks")),
+    dlenSigMin_(iConfig.getParameter<double>("dlenSigMin")),
     dR_max_(iConfig.getParameter<double>("dR_max")),
     relPt_max_(iConfig.getParameter<double>("relPt_max"))
 {
@@ -91,6 +93,7 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         std::vector<float> Hadron_GVx, Hadron_GVy, Hadron_GVz;
         std::vector<float>  Hadron_GVx_i, Hadron_GVy_i, Hadron_GVz_i;
         std::vector<int> Hadron_pdgId;
+        std::vector<int> Hadron_pdgClass, Hadron_isB, Hadron_isD;
         std::vector<float> Daughters_pt, Daughters_eta, Daughters_phi;
         std::vector<int> Daughters_charge, Daughters_GVidx;
         VertexDistance3D vdist;
@@ -99,7 +102,7 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         // save coordinates of SV (will be used for matching with GV)
         for (auto const& sv : *secondaryVertices) {
             Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
-            if (dl.value() > 0 and dl.significance() > 3) {
+            if (dl.value() > 0 and dl.significance() > dlenSigMin_) {
                 SV_x.push_back(sv.x());
                 SV_y.push_back(sv.y());
                 SV_z.push_back(sv.z());
@@ -152,11 +155,26 @@ void GenVertexProducer::produce(edm::Event& iEvent,
                 Hadron_eta.push_back(hadron->eta());
                 Hadron_phi.push_back(hadron->phi());
                 Hadron_pdgId.push_back(hadron->pdgId());
+                Hadron_pdgClass.push_back(hadPDG);
+                
+                
 
                 // Save GenVertex
                 ngv++;
-                if(hadPDG==1) ngv_b++;
-                if(hadPDG==2) ngv_d++;
+                if(hadPDG==1) {
+                    ngv_b++;
+                    Hadron_isB.push_back(1);
+                    }
+                else{
+                    Hadron_isB.push_back(0);
+                }
+                if(hadPDG==2) {
+                    ngv_d++;
+                    Hadron_isD.push_back(1);
+                    }
+                else{
+                    Hadron_isD.push_back(0);
+                }
                 if(hadPDG==3) ngv_s++;
                 if(hadPDG==4) ngv_tau++;
                 Hadron_GVx.push_back(vx);               // point of decay of the hadron
@@ -182,7 +200,7 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         int SV_index=0;
         for (const auto &sv : *secondaryVertices) {
             Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
-            if (dl.value() > 0 and dl.significance() > 3) {
+            if (dl.value() > 0 and dl.significance() > dlenSigMin_) {
             for (auto it = sv.tracks_begin(); it != sv.tracks_end(); ++it) {
                 const edm::RefToBase<reco::Track>& trkRef = *it;
                 if (trkRef.isNull()) continue;
@@ -232,6 +250,10 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         gvTable->addColumn<float>("z_i",Hadron_GVz_i,"Born z coordinate of GV ", nanoaod::FlatTable::FloatColumn);
         gvTable->addColumn<int>("Hadron_SVIdx",Hadron_SVIdx,"SVIdx", nanoaod::FlatTable::IntColumn);
         gvTable->addColumn<int>("Hadron_pdgId",Hadron_pdgId,"Hadron_pdgId", nanoaod::FlatTable::IntColumn);
+        // new class
+        gvTable->addColumn<int>("isB",Hadron_isB,"isB", nanoaod::FlatTable::IntColumn);
+        gvTable->addColumn<int>("isD",Hadron_isD,"isD", nanoaod::FlatTable::IntColumn);
+        gvTable->addColumn<int>("pdgClass",Hadron_pdgId,"pdgClass", nanoaod::FlatTable::IntColumn);
         
         //
 
@@ -273,6 +295,14 @@ int GenVertexProducer::checkPDG(int abs_pdg) const {
 //  isAncestor() 
 std::optional<std::tuple<float, float, float>> GenVertexProducer::isAncestor(const reco::Candidate* ancestor, const reco::Candidate* particle) const
     {
+    std::vector<int> pdgList_B = {521,511,531,541,5122,5132,5232,5332,5142,5242,5342,5512,5532,5542,5554};
+    std::vector<int> pdgList_D = {411,421,431,4122,4232,4132,4332,4412,4422,4432,4444};
+    std::vector<int> pdgList_S = {3122,3222,3212,3312,3322,3334};
+    std::vector<int> pdgList_Tau = {15};
+    std::unordered_set<int> pdgSet_D(pdgList_D.begin(), pdgList_D.end());
+    std::unordered_set<int> pdgSet_B(pdgList_B.begin(), pdgList_B.end());
+    std::unordered_set<int> pdgSet_S(pdgList_S.begin(), pdgList_S.end());
+    std::unordered_set<int> pdgSet_Tau(pdgList_Tau.begin(), pdgList_Tau.end());
     const reco::Candidate* current = particle;
     //const reco::Candidate* child = nullptr;
 
@@ -282,7 +312,8 @@ std::optional<std::tuple<float, float, float>> GenVertexProducer::isAncestor(con
             // Found the ancestor; return the vertex of the current particle (i.e., the direct daughter)
             return std::make_optional(std::make_tuple(current->vx(), current->vy(), current->vz()));
         }
-        //child = current;
+        int mother_pdg = std::abs(mother->pdgId());
+        if (pdgSet_B.count(mother_pdg) || pdgSet_D.count(mother_pdg) || pdgSet_S.count(mother_pdg) || pdgSet_Tau.count(mother_pdg)) break;
         current = mother;
     }
 

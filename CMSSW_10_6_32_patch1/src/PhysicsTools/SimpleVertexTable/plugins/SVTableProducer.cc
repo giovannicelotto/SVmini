@@ -11,17 +11,29 @@
 #include "RecoVertex/VertexPrimitives/interface/VertexState.h"
 class SVTableProducer : public edm::global::EDProducer<> {
 public:
-    explicit SVTableProducer(const edm::ParameterSet &iConfig):
-    svToken(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("src"))), 
-    pvs_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc")))
-    {
-        produces<nanoaod::FlatTable>("SVTable");
-        produces<nanoaod::FlatTable>("SVtrksTable");
-    }
-
+    explicit SVTableProducer(const edm::ParameterSet &iConfig);
     void produce(edm::StreamID,
                  edm::Event &iEvent,
-                 const edm::EventSetup &) const override 
+                 const edm::EventSetup &) const override;
+
+private:
+    edm::EDGetTokenT<std::vector<reco::Vertex>> svToken;
+    edm::EDGetTokenT<std::vector<reco::Vertex>> pvs_;
+    double dlenSigMin_;   // <-- add this
+};
+
+SVTableProducer::SVTableProducer(const edm::ParameterSet &iConfig)
+    : svToken(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("src"))),
+      pvs_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
+      dlenSigMin_(iConfig.getParameter<double>("dlenSigMin"))  // <-- read parameter
+{
+    produces<nanoaod::FlatTable>("SVTable");
+    produces<nanoaod::FlatTable>("SVtrksTable");
+}
+
+void SVTableProducer::produce(edm::StreamID,
+                 edm::Event &iEvent,
+                 const edm::EventSetup &) const 
     {
         edm::Handle<std::vector<reco::Vertex>> svs;
         iEvent.getByToken(svToken, svs);
@@ -44,7 +56,7 @@ public:
         unsigned int nSV_cutdlen = 0;
         for (auto const& sv : *svs) {
             Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
-            if (dl.value() > 0 and dl.significance() > 3) {
+            if (dl.value() > 0 and dl.significance() > dlenSigMin_) {
                 nTrksCurrentSV = 0;
                 for (auto it = sv.tracks_begin(); it != sv.tracks_end(); ++it) {
                     const edm::RefToBase<reco::Track>& trkRef = *it;
@@ -71,7 +83,7 @@ public:
         //std::cout<<svs->size()<<" SVs to process\n";
         for (const auto &sv : *svs) {
             Measurement1D dl = vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
-            if (dl.value() > 0 and dl.significance() > 3) {
+            if (dl.value() > 0 and dl.significance() > dlenSigMin_) {
                 nTrksPerSV = 0;
                 // First count tracks with weight >= 0.5
                 for (auto it = sv.tracks_begin(); it != sv.tracks_end(); ++it) {
@@ -150,10 +162,7 @@ public:
         iEvent.put(std::move(trk_table), "SVtrksTable");
     } 
 
-private:
-    const edm::EDGetTokenT<std::vector<reco::Vertex>> svToken;
-    const edm::EDGetTokenT<std::vector<reco::Vertex>> pvs_;
-};
+
     
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(SVTableProducer);
