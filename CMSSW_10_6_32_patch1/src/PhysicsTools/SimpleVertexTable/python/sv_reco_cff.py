@@ -3,9 +3,20 @@ import FWCore.ParameterSet.Config as cms
 unpackedTracksAndVertices = cms.EDProducer('PATTrackAndVertexUnpacker',
     slimmedVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
     slimmedSecondaryVertices = cms.InputTag("slimmedSecondaryVertices"),
-    additionalTracks = cms.InputTag(""),
+    additionalTracks = cms.InputTag("lostTracks"),
     packedCandidates = cms.InputTag("packedPFCandidates")
 )
+
+dummyValueMap = cms.EDProducer("DummyTrackValueMap",
+    src = cms.InputTag("unpackedTracksAndVertices"),
+    pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices")
+)
+
+#
+# 
+# Here goes the GNN part
+# 
+# 
 # IVF parameter : https://github.com/cms-sw/cmssw/blob/55251374c7e82ee5ee7626de6248007aec863e1c/RecoVertex/AdaptiveVertexFinder/python/inclusiveVertexFinder_cfi.py#L15C1-L16C49
 inclusiveVertexFinder = cms.EDProducer('InclusiveVertexFinder',
   beamSpot = cms.InputTag('offlineBeamSpot'),
@@ -96,7 +107,9 @@ def custom_sv_tracks(process):
   process.trackVertexArbitrator = trackVertexArbitrator
   process.myFinalInclusiveSecondaryVertices = myFinalInclusiveSecondaryVertices
   process.svTable = svTable
+  process.dummyValueMap = dummyValueMap
   process.sv_track = cms.Sequence(   process.unpackedTracksAndVertices*
+                                    process.dummyValueMap*
                                       process.inclusiveVertexFinder*
                                       process.vertexMerger*
                                       process.trackVertexArbitrator*

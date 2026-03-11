@@ -9,23 +9,29 @@
 #include "RecoVertex/VertexTools/interface/VertexDistanceXY.h"
 #include "RecoVertex/VertexPrimitives/interface/ConvertToFromReco.h"
 #include "RecoVertex/VertexPrimitives/interface/VertexState.h"
+#include "TrackingTools/IPTools/interface/IPTools.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
+#include "TrackingTools/Records/interface/TransientTrackRecord.h"
+
 class SVTableProducer : public edm::global::EDProducer<> {
 public:
     explicit SVTableProducer(const edm::ParameterSet &iConfig);
     void produce(edm::StreamID,
                  edm::Event &iEvent,
-                 const edm::EventSetup &) const override;
+                 const edm::EventSetup &iSetup) const override;
 
 private:
     edm::EDGetTokenT<std::vector<reco::Vertex>> svToken;
     edm::EDGetTokenT<std::vector<reco::Vertex>> pvs_;
-    double dlenSigMin_;   // <-- add this
+    double dlenSigMin_;  
+    edm::ESGetToken<TransientTrackBuilder, TransientTrackRecord> theTTBToken;
 };
 
-SVTableProducer::SVTableProducer(const edm::ParameterSet &iConfig)
-    : svToken(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("src"))),
-      pvs_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
-      dlenSigMin_(iConfig.getParameter<double>("dlenSigMin"))  // <-- read parameter
+SVTableProducer::SVTableProducer(const edm::ParameterSet &iConfig): 
+    svToken(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("src"))),
+    pvs_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
+    dlenSigMin_(iConfig.getParameter<double>("dlenSigMin")),
+    theTTBToken(esConsumes<TransientTrackBuilder, TransientTrackRecord>(edm::ESInputTag("", "TransientTrackBuilder")))
 {
     produces<nanoaod::FlatTable>("SVTable");
     produces<nanoaod::FlatTable>("SVtrksTable");
@@ -33,7 +39,7 @@ SVTableProducer::SVTableProducer(const edm::ParameterSet &iConfig)
 
 void SVTableProducer::produce(edm::StreamID,
                  edm::Event &iEvent,
-                 const edm::EventSetup &) const 
+                 const edm::EventSetup &iSetup) const 
     {
         edm::Handle<std::vector<reco::Vertex>> svs;
         iEvent.getByToken(svToken, svs);
@@ -76,6 +82,20 @@ void SVTableProducer::produce(edm::StreamID,
 
         std::vector<float> x, y, z, chi2, ndof, pt, eta, phi, mass, dlen, dlenSig;
         std::vector<float> trk_pt, trk_eta, trk_phi, trk_weight;
+        std::vector<float> trk_ip_z, trk_ip_z_sig, trk_ip2d, trk_ip3d, trk_ip2d_sig, trk_ip3d_sig, trk_p, trk_charge, trk_numberOfValidHits, trk_numberOfValidPixelHits, trk_numberOfValidStripHits;
+        // vector pair [num_tracks * num_tracks / 2]
+        // trk_i 
+        // trk_j 
+        // deltaR
+        // dca
+        // dca sig 
+        // pvtoPCA_i
+        // pvtoPCA_j
+        // dotprod_i
+        // dotprod_j
+        // pair_mom
+        // pair_invmass
+
         std::vector<int> nTracks;
         std::vector<int> trk_SVidx;
 
@@ -121,7 +141,41 @@ void SVTableProducer::produce(edm::StreamID,
                     trk_weight.push_back(w);
                     trk_eta.push_back(trkRef->eta());
                     trk_phi.push_back(trkRef->phi());
-                    trk_SVidx.push_back(x.size()-1); 
+                    trk_SVidx.push_back(x.size()-1);
+                    // for GNN model:
+                    //trk_ip_z.push_back(trkRef->ip_z())
+                    //trk_ip_z_sig.push_back(trkRef->ip_z_sig())
+                    //trk_ip2d.push_back(trkRef->ip2d())
+                    //trk_ip3d.push_back(trkRef->ip3d())
+                    //trk_ip2d_sig.push_back(trkRef->ip2d_sig())
+                    //trk_ip3d_sig.push_back(trkRef->ip3d_sig())
+                    trk_p.push_back(trkRef->p());
+                    trk_charge.push_back(trkRef->charge());
+                    trk_numberOfValidHits.push_back(trkRef->numberOfValidHits());
+                    trk_numberOfValidPixelHits.push_back(trkRef->hitPattern().numberOfValidPixelHits());
+                    trk_numberOfValidStripHits.push_back(trkRef->hitPattern().numberOfValidStripHits());
+
+
+                    double ip_z = trkRef->dz(PV0.position());
+                    double ip_z_sig = ip_z / trkRef->dzError();
+                    trk_ip_z.push_back(ip_z);
+                    trk_ip_z_sig.push_back(ip_z_sig);
+
+
+                    GlobalVector direction(1,0,0);
+                    direction = direction.unit();
+                    
+                    // Building Transient Track
+                    const auto& ttBuilder = iSetup.getData(theTTBToken);
+                    reco::TransientTrack ttrk = ttBuilder.build(*trkRef);
+                    auto ip2d_val = IPTools::signedTransverseImpactParameter(ttrk, direction, PV0).second;
+                    auto ip3d_val = IPTools::signedImpactParameter3D(ttrk, direction, PV0).second;
+
+                    trk_ip2d.push_back(ip2d_val.value());
+                    trk_ip3d.push_back(ip3d_val.value());
+                    trk_ip2d_sig.push_back(ip2d_val.significance());
+                    trk_ip3d_sig.push_back(ip3d_val.significance());
+
                     p4s_SV += p4;
                 }
                 pt.push_back(p4s_SV.Pt());
@@ -156,6 +210,22 @@ void SVTableProducer::produce(edm::StreamID,
         trk_table->addColumn<float>("trk_weight", trk_weight, "trk_weight", nanoaod::FlatTable::FloatColumn);
         trk_table->addColumn<float>("trk_eta", trk_eta, "trk_eta ", nanoaod::FlatTable::FloatColumn);
         trk_table->addColumn<float>("trk_phi", trk_phi, "trk_phi", nanoaod::FlatTable::FloatColumn);
+
+
+        trk_table->addColumn<float>("trk_p", trk_p, "trk_p", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_charge", trk_charge, "trk_charge ", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_numberOfValidHits", trk_numberOfValidHits, "trk_numberOfValidHits", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_numberOfValidPixelHits", trk_numberOfValidPixelHits, "trk_numberOfValidPixelHits", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_numberOfValidStripHits", trk_numberOfValidStripHits, "trk_numberOfValidStripHits ", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_ip_z", trk_ip_z, "trk_ip_z ", nanoaod::FlatTable::FloatColumn);
+
+        trk_table->addColumn<float>("trk_ip_z_sig", trk_ip_z_sig, "trk_ip_z_sig", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_ip2d", trk_ip2d, "trk_ip2d", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_ip3d", trk_ip3d, "trk_ip3d", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_ip2d_sig", trk_ip2d_sig, "trk_ip2d_sig", nanoaod::FlatTable::FloatColumn);
+        trk_table->addColumn<float>("trk_ip3d_sig", trk_ip3d_sig, "trk_ip3d_sig", nanoaod::FlatTable::FloatColumn);
+
+
         trk_table->addColumn<int>("trk_SVidx", trk_SVidx, "trk_SVidx", nanoaod::FlatTable::IntColumn);
 
         iEvent.put(std::move(table), "SVTable");

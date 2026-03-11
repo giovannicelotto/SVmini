@@ -11,6 +11,8 @@ from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 from Configuration.Eras.Modifier_run2_nanoAOD_106Xv2_cff import run2_nanoAOD_106Xv2
 from FWCore.ParameterSet.VarParsing import VarParsing
 from PhysicsTools.NanoAOD.common_cff import P4Vars, Var, CandVars
+import sys 
+sys.path.append("/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/PhysicsTools/SimpleVertexTable/python")
 process = cms.Process('NANO',Run2_2018,run2_nanoAOD_106Xv2)
 options = VarParsing('python')
 
@@ -24,8 +26,8 @@ options.register('collection', "candidate",
     VarParsing.varType.string,
     "collection chosen"
 )
+
 options.parseArguments()
-print(options)
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
@@ -37,17 +39,20 @@ process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('PhysicsTools.NanoAOD.nano_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+#process.load("slimming.slimming_cff")
+#from slimming.slimming_cff import *
 
-
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(500),
-    output = cms.untracked.int32(500)
+    input = cms.untracked.int32(10000),
+    output = cms.untracked.int32(10000)
 )
+print(options)
 
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring( (
-        'file:/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/mini_1.root', 
+        'file:/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/ttHadronic.root', 
      ) ),
     secondaryFileNames = cms.untracked.vstring()
 )
@@ -61,7 +66,6 @@ process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.19 $')
 )
 
-# Output definition
 
 if options.outputFile=="output.root":
     if options.collection=="":
