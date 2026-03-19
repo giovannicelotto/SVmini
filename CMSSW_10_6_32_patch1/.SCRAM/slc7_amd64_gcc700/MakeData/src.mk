@@ -47,7 +47,7 @@ endif
 endif
 LIBTYPE:= 
 
-subdirs_src+=$(filter-out Documentation, src_new)
+subdirs_src+=$(filter-out Documentation, src_plots src_PhysicsTools src_config_cmssw)
 
 COND_SERIALIZATION:=$(SCRAM_SOURCEDIR)/CondFormats/Serialization/python/condformats_serialization_generate.py
 ALL_EXTRA_PRODUCT_RULES+=LCG

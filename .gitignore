@@ -3,7 +3,7 @@
 CMSSW*/tmp/*
 CMSSW*/.SCRAM/**/*
 CMSSW*/lib/*
-CMSSW_14_1_0/config/*
+CMSSW_1*/config/*
 PAT*
 *.root
 *.png

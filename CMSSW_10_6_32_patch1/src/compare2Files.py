@@ -16,9 +16,10 @@ hep.style.use("CMS")
 
 # %%
 #fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/HIG-RunIISummer20UL18NanoAODv9-12707.root"
-central = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/central.root"
+central = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/central_tt.root"
 #custom = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/custom.root"
-custom = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/candidate.root"
+custom = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/track_tt.root"
+#custom = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/candidate_tt.root"
 f_central = uproot.open(central)
 f_custom = uproot.open(custom)
 tree_central = f_central["Events"]
@@ -54,11 +55,13 @@ for count, edge in zip(counts, edges[:-1]):
     if count > 0:
         ax.text(edge + 0.5*(edges[1]-edges[0]), count, f'{int(count)}',
                 ha='center', va='bottom', fontsize=18)
-ax.set_xlabel("nSV(custom) - nSV(IVFcentral)")
+name = "candidate" if "candidate" in custom else ("track" if "track" in custom else "custom")
+ax.set_xlabel(f"nSV({name}) - nSV(IVFcentral)")
 ax.set_ylabel("Counts")  # switched to counts, since density=False
-ax.text(x=0.95, y=0.95, s=f'Events: {len(values)}', transform=ax.transAxes,
-        ha='right', va='top', fontsize=18)
+ax.text(x=0.95, y=0.95, s=f'Events: {len(values)}', transform=ax.transAxes,ha='right', va='top', fontsize=18)
+ax.text(x=0.95, y=0.9, s=r'$t\bar{t}$ hadronic', transform=ax.transAxes,ha='right', va='top', fontsize=18)
 plt.show()
+fig.savefig(f"/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/plots/nSV_custom_vs_central/{name}.png")
 # %%
 from scipy.optimize import linear_sum_assignment
 def deltaR_matrix(eta1, phi1, eta2, phi2):
@@ -84,6 +87,7 @@ for i in range(tree_central.num_entries):
     n_central = nSV[i]
     n_custom  = nmySV[i]
     print("Event {}: nSV_central = {}, nSV_custom = {}".format(i, n_central, n_custom))
+    #if n_custom==n_central:
     if True:
         
         print("Same number of SV → one-to-one matching")

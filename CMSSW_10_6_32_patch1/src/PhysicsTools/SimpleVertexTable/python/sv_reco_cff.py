@@ -9,7 +9,8 @@ unpackedTracksAndVertices = cms.EDProducer('PATTrackAndVertexUnpacker',
 
 dummyValueMap = cms.EDProducer("DummyTrackValueMap",
     src = cms.InputTag("unpackedTracksAndVertices"),
-    pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices")
+    pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    model_path = cms.FileInPath("PhysicsTools/data/submod_out128_hyper_1802.onnx"),
 )
 
 #

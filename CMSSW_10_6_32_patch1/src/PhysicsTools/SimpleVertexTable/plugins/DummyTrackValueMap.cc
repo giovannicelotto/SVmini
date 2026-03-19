@@ -16,12 +16,13 @@
 #include "TLorentzVector.h"
 #include "TrackingTools/PatternTools/interface/TwoTrackMinimumDistance.h"
 #include "TrackingTools/GeomPropagators/interface/AnalyticalImpactPointExtrapolator.h"
-
+#include "PhysicsTools/ONNXRuntime/interface/ONNXRuntime.h"
+class ONNXRuntime;
 
 class DummyTrackValueMap : public edm::stream::EDProducer<> {
 public:
-  explicit DummyTrackValueMap(const edm::ParameterSet&);
-void produce(
+  explicit DummyTrackValueMap(const edm::ParameterSet&, const ONNXRuntime*);
+    void produce(
                 edm::Event &iEvent,
                 const edm::EventSetup &iSetup) override;
 
@@ -31,7 +32,7 @@ private:
   edm::ESGetToken<TransientTrackBuilder, TransientTrackRecord> theTTBToken;
 };
 
-DummyTrackValueMap::DummyTrackValueMap(const edm::ParameterSet& iConfig):
+DummyTrackValueMap::DummyTrackValueMap(const edm::ParameterSet& iConfig, const ONNXRuntime *cache):
   tracksToken_(consumes<reco::TrackCollection>(iConfig.getParameter<edm::InputTag>("src"))),
   pvsToken_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
   theTTBToken(esConsumes<TransientTrackBuilder, TransientTrackRecord>(edm::ESInputTag("", "TransientTrackBuilder")))
@@ -41,6 +42,12 @@ DummyTrackValueMap::DummyTrackValueMap(const edm::ParameterSet& iConfig):
     produces<edm::ValueMap<float>>("SVscore_C");
     produces<edm::ValueMap<float>>("SVscore_CfromB");
 }
+std::unique_ptr<ONNXRuntime> DemoAnalyzer::initializeGlobalCache(const edm::ParameterSet &iConfig) 
+{
+    return std::make_unique<ONNXRuntime>(iConfig.getParameter<edm::FileInPath>("model_path").fullPath());
+}
+
+void DemoAnalyzer::globalEndJob(const ONNXRuntime *cache) {}
 
 void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetup)
 {
@@ -198,6 +205,170 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    std::vector<std::vector<float>> track_features;
+   	std::vector<std::vector<float>> edge_features;
+   	std::vector<int64_t> edge_i, edge_j;
+	
+	   // Step 1: Build track_features, and track bad ones
+   	for (size_t i = 0; i < static_cast<size_t>(ntrk); ++i) {
+   	    std::vector<float> features = {
+   	        trk_eta[i],
+   	        trk_phi[i],
+   	        trk_ip2d[i],
+   	        trk_ip3d[i],
+   	        trk_ipz[i],
+   	        trk_ipzsig[i],
+   	        trk_ip2dsig[i],
+   	        trk_ip3dsig[i],
+   	        trk_p[i],
+   	        trk_pt[i],
+   	        static_cast<float>(trk_nValid[i]),
+   	        static_cast<float>(trk_nValidPixel[i]),
+   	        static_cast<float>(trk_nValidStrip[i]),
+   	        static_cast<float>(trk_charge[i])
+   	    };
+   	
+   	    bool has_nan = false;
+   	    for (float val : features) {
+   	        if (!std::isfinite(val)) {
+   	            has_nan = true;
+   	            break;
+   	        }
+   	    }
+   	
+   	    if (has_nan) {
+   	        features = {
+   	         -999.0f, -999.0f, -999.0f, -999.0f, -999.0f, -999.0f, -999.0f, -999.0f, -999.0f, -999.0f,  // 10 dummy float features
+   	         -1.0f, -1.0f, -1.0f,  // 3 dummy int features as float
+   	         -3.0f          // charge dummy
+   	        };
+   	    }
+   	
+   	    track_features.push_back(features);
+   	}
+
+   	 
+   	
+   	for (size_t idx = 0; idx < trk_i.size(); ++idx) {
+   	    int oi = trk_i[idx];
+   	    int oj = trk_j[idx];
+
+	    int ni = origToNode[oi];
+	    int nj = origToNode[oj];
+
+   	    edge_i.push_back(ni);
+   	    edge_j.push_back(nj);
+   	    
+   	     edge_features.push_back({
+   	     dca[idx],
+   	     deltaR[idx],
+   	     dca_sig[idx],
+   	     cptopv[idx],
+   	     pvtoPCA_i[idx],
+   	     pvtoPCA_j[idx],
+   	     dotprod_i[idx],
+   	     dotprod_j[idx],
+   	     pair_mom[idx],
+   	     pair_invmass[idx]
+   	     }); 
+   	 }
+
+   	std::vector<float> x_in_flat;
+   	x_in_flat.reserve(track_features.size() * 14);
+   	for (const auto& feat : track_features)
+   	    x_in_flat.insert(x_in_flat.end(), feat.begin(), feat.end());
+
+   	std::vector<float> edge_index_flat_f;
+   	edge_index_flat_f.reserve(edge_i.size() * 2);
+   	for (size_t k = 0; k < edge_i.size(); ++k) {
+   	    edge_index_flat_f.push_back(static_cast<float>(edge_i[k]));
+   	}
+
+   	for (size_t k = 0; k < edge_j.size(); ++k) {
+   	    edge_index_flat_f.push_back(static_cast<float>(edge_j[k]));
+   	}
+
+   	std::vector<float> edge_attr_flat;
+   	edge_attr_flat.reserve(edge_features.size() * 10);
+   	for (const auto& feat : edge_features)
+   	    edge_attr_flat.insert(edge_attr_flat.end(), feat.begin(), feat.end());
+   	   
+   	// === 4. Set input names and feed data ===
+   	std::vector<std::string> input_names_ = {"x_in", "edge_index", "edge_attr"};
+
+   	std::vector<std::vector<int64_t>> input_shapes_ = {
+   	 {1, static_cast<int64_t>(track_features.size()), 14},        // x_in
+   	 {1, 2, static_cast<int64_t>(edge_i.size())},                // edge_index
+   	 {1, static_cast<int64_t>(edge_features.size()), 10}         // edge_attr
+   	};
+   	   
+   	std::vector<std::vector<float>> data_ = {
+   	 x_in_flat,
+   	 edge_index_flat_f,
+   	 edge_attr_flat
+   	};
+
+
+   	std::vector<std::vector<float>> output = globalCache()->run(input_names_, data_, input_shapes_);
+
+   	const std::vector<float>& sv_logits_flat = output[0];
+   	const std::vector<float>& sv_sub_logits_flat = output[1];
+   	const std::vector<float>& edge_logits_flat  = output[2]; // [E]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // evaluation of edge features
     for (const auto& trk_i : *tracks) {
