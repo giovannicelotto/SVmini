@@ -89,22 +89,24 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
     edge_score.reserve(tracks->size() * tracks->size() / 2);
     int num_tracks = tracks->size();
 
-    std::vector<int> origToNode(num_tracks, -1);
+    std::vector<int> origToNode(num_tracks, -1); // length of tracks. -1 for non valid ttrk. otherwise counts 0,1, 2, -1, 3, ..
     std::vector<int> nodeToOrig;
     nodeToOrig.reserve(num_tracks);
     int node = 0;
     int trk_idx = 0; // number of track whose transient track is valid
 
-    for (const auto& trk : *tracks) {
+
+    // fill the vectors for ecah valid transietn track
+    for (size_t i = 0; i < tracks->size(); ++i) {
+        const auto& trk = (*tracks)[i];
         reco::TransientTrack ttrk = ttBuilder.build(trk);
 
         if (!(ttrk.isValid())) continue;
         
-        origToNode[trk_idx] = node;
- 	    nodeToOrig.push_back((int)trk_idx);
+        origToNode[i] = node;
+ 	    nodeToOrig.push_back((int)i);
 
         trk_pt.push_back(trk.pt());
-        //trk_weight.push_back(w);
         trk_eta.push_back(trk.eta());
         trk_phi.push_back(trk.phi());
         trk_p.push_back(trk.p());
@@ -125,31 +127,36 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
         auto ip2d_val = IPTools::signedTransverseImpactParameter(ttrk, direction, PV0).second;
         auto ip3d_val = IPTools::signedImpactParameter3D(ttrk, direction, PV0).second;
 
-        trk_ip2d.push_back(ip2d_val.value());
-        trk_ip3d.push_back(ip3d_val.value());
-        trk_ip2d_sig.push_back(ip2d_val.significance());
-        trk_ip3d_sig.push_back(ip3d_val.significance());
+        trk_ip2d.push_back(std::abs(ip2d_val.value()));
+        trk_ip3d.push_back(std::abs(ip3d_val.value()));
+        trk_ip2d_sig.push_back(std::abs(ip2d_val.significance()));
+        trk_ip3d_sig.push_back(std::abs(ip3d_val.significance()));
 
         node++;
-        trk_idx++;
     }
 
     
-        // retrieve information of tracks
+    // Fill information of track pairs
     std::vector<int> trk_idxs, trk_jdxs;
     std::vector<float> deltaR, dca, dca_sig, cptopv, pvtoPCA_j, pvtoPCA_i, dotprod_j, dotprod_i, pair_mom, pair_invmass, dotprodTrack, dotprodSeed;
 
     const float PION_MASS = 0.13957018;
-    int idx = 0;
-    int jdx = 0;
     #pragma omp parallel for
-    for (const auto& trk_i : *tracks) {
+    for (size_t i = 0; i < tracks->size(); ++i) {
+        const auto& trk_i = (*tracks)[i];
         reco::TransientTrack ttrk_i = ttBuilder.build(trk_i);
         if (!ttrk_i.isValid()) continue;
-            
-        for (const auto& trk_j : *tracks) {
+        int ni = origToNode[i];
+        if (ni < 0) continue; //redundant for valid track
+
+        for (size_t j = i + 1; j < tracks->size(); ++j) {
+            if (i == j) continue;
+            const auto& trk_j = (*tracks)[j];
             reco::TransientTrack ttrk_j = ttBuilder.build(trk_j);
             if (!ttrk_j.isValid()) continue;
+
+            int nj = origToNode[j];
+            if (nj < 0) continue;
             
             // Definition of TLorentzVectors
             TLorentzVector p4_i;
@@ -162,7 +169,7 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
             float inv_mass = pair.M();
             if (inv_mass>20.0) continue;
             float delta_r_val = (p4_i.DeltaR(p4_j));
-            if (delta_r_val > 1.0) continue;
+            if (delta_r_val < 2e-4 or delta_r_val > 1) continue;
 
 
             float dca_val = -1.0;  // Default invalid value
@@ -176,7 +183,6 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
             // filling vectors
 
             TwoTrackMinimumDistance minDist;
-            if (idx == jdx) continue; // skip self-pairs
             if (minDist.calculate(ttrk_i.impactPointState(), ttrk_j.impactPointState())) {
             	VertexDistance3D distanceComputer;
             	auto m = distanceComputer.distance(
@@ -207,14 +213,14 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
                 pairMomentumMag = pairMomentum.mag();
             }
 
-            if (dca_val > 1 or dcaSig_val > 100 or cptopv_val > 20 or pvToPCAseed_val > 20 or pvToPCAtrack_val > 20) continue;	
+            if (dca_val < 1e-8 or dca_val > 1 or dcaSig_val > 100 or cptopv_val > 20 or pvToPCAseed_val > 20 or pvToPCAtrack_val > 20) continue;	
             if (pairMomentumMag < 0.05 or pairMomentumMag > 100) continue;
 
             // append with single thread
             #pragma omp critical
             {
-                trk_idxs.push_back(idx);
-                trk_jdxs.push_back(jdx);
+                trk_idxs.push_back(i);
+                trk_jdxs.push_back(j);
                 deltaR.push_back(delta_r_val);
                 dca.push_back(dca_val);
                 dca_sig.push_back(dcaSig_val);
@@ -234,7 +240,7 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
    	std::vector<std::vector<float>> edge_features;
    	std::vector<int64_t> edge_i, edge_j;
 
-   	for (size_t i = 0; i < static_cast<size_t>(num_tracks); ++i) {
+   	for (size_t i = 0; i < trk_eta.size(); ++i){
    	    std::vector<float> features = {
    	        trk_eta[i],
    	        trk_phi[i],
@@ -272,7 +278,7 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
    	}
 
    	 
-   	
+   	//looping over tracks pasing cuts
    	for (size_t idx = 0; idx < trk_idxs.size(); ++idx) {
    	    int oi = trk_idxs[idx];
    	    int oj = trk_jdxs[idx];
@@ -347,6 +353,7 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
           float eb = std::exp(b - m);
           return eb / (ea + eb);
     };
+    //std::cout << "sv_logits_flat size = " << sv_logits_flat.size() << std::endl;
 
     //std::cout<<"Model output sizes: SV logits=" << sv_logits_flat.size() 
     //         << ", SV sub-logits=" << sv_sub_logits_flat.size() 
@@ -393,15 +400,15 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
         }
 
     // GNN evaluation placeholder
-    idx = 0;
-    for (const auto& trk : *tracks) {
-            float feature = 1;//sv_logits_flat[idx];    // placeholder
-            track_SVscore.push_back(softmax2_prob1(idx));
-            track_SVscore_B.push_back(feature);
-            track_SVscore_C.push_back(feature);
-            track_SVscore_CfromB.push_back(feature);
-            idx++;
-      }
+//    int idx = 0;
+//    for (const auto& trk : *tracks) {
+//            float feature = 1;//sv_logits_flat[idx];    // placeholder
+//            //track_SVscore.push_back(softmax2_prob1(idx));
+//            track_SVscore_B.push_back(feature);
+//            track_SVscore_C.push_back(feature);
+//            track_SVscore_CfromB.push_back(feature);
+//            idx++;
+//      }
 
     auto valMap = std::make_unique<edm::ValueMap<float>>();
     edm::ValueMap<float>::Filler filler(*valMap);
@@ -419,11 +426,17 @@ void DummyTrackValueMap::produce(edm::Event& iEvent,const edm::EventSetup &iSetu
     
     auto selectedTracks = std::make_unique<std::vector<reco::Track>>();
     std::vector<float> selected_SVscores;  // keep SVscore for selected tracks
+    
     for (size_t i = 0; i < tracks->size(); ++i) {
-        float score = softmax2_prob1(i);
-        if (score > threshold_) {
-            selectedTracks->push_back((*tracks)[i]);
-            selected_SVscores.push_back(track_SVscore[i]);
+        int ni = origToNode[i];
+    
+        if (ni < 0) {
+            selected_SVscores.push_back(-1.0f); // or default
+        } else {
+
+            selected_SVscores.push_back(softmax2_prob1(ni));
+            if (softmax2_prob1(ni) > threshold_) {
+            selectedTracks->push_back((*tracks)[i]);}
         }
     }
 

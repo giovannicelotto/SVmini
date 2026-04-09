@@ -18,7 +18,7 @@ f_central = uproot.open(fileName_central)
 tree_central = f_central["Events"]
 branches_central = tree_central.arrays()
 
-fileName_track = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/track_tt_2.root"
+fileName_track = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/track_cov.root"
 f_track = uproot.open(fileName_track)
 tree_track = f_track["Events"]
 branches_track = tree_track.arrays()

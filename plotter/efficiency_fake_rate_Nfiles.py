@@ -11,20 +11,21 @@ from plot_efficiency_vs_variable import efficiencyVsVariable, efficiencyVsVariab
 
 # List of files and labels
 fileNames = [
-    ("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits8_0p0.root", "NNcut0_8Hits"),
-    ("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_0p001.root", "NNcut1e-3_8Hits"),
-    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4.root", "NNcut0p0_4Hits"),
-    ("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p0001.root", "NNcut1e-4_4Hits"),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p0.root", "NNcut0_8Hits"),
+    ("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/central.root", "Central IVF"),
+    ("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/candidate.root", "IVF@MiniAOD"),
+    ("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/candidate.root", "IVF extended Inputs"),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p1.root", "NNcut0p1_4Hits "),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p2.root", "NNcut0p2_4Hits "),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p4.root", "NNcut0p4_4Hits "),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p6.root", "NNcut0p6_4Hits "),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p4.root", "NNcut0p4_4Hits"),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p10.root", "NNcut0p10_4Hits"),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p1.root", "NNcut0p1_4Hits"),
+    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p15.root", "NNcut0p15_4Hits"),
 
-    ("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p00005.root", "NNcut5e-5_4Hits"),
-    ("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p00001.root", "NNcut1e-6_4Hits"),
     
-    
-    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p0001.root", "minHits4_0p0001"),
-    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_0p01.root", "NNcut0p01"),
-    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_0p001.root", "NNcut0p001"),
-    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_0p0005.root", "NNcut0p0005"),
-    #("/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_0p0001.root", "NNcut0p0001"),
+
 ]
 
 # Dictionaries to store branches and computed values
@@ -66,7 +67,10 @@ rows = []
 for label in [l for _, l in fileNames]:
     b = branches[label]
     GV_idx = b["GV_Hadron_SVIdx"]
-    nSV = b["nmySV"]
+    try:
+        nSV = b["nSV"]
+    except:
+        nSV = b["nmySV"]
     nGV = b["nGV"]
     GV_pdg = b["GV_Hadron_pdgId"]
     GV_pdg = b["GV_Hadron_pdgId"]
@@ -83,10 +87,10 @@ for label in [l for _, l in fileNames]:
 # Print summary
 print("\nSV Matching Summary")
 print("-" * 103)
-print(f"{'Collection':<12}     {'Matched SV':>12}     {'Total SV':>12}       {'Total GV':>12}     {'Efficiency [%]':>15}     {'Fake Rate [%]':>12}")
+print(f"{'Collection':<12}          {'Matched SV':>12}     {'Total SV':>12}    {'Total GV':>12}     {'Efficiency [%]':>15}       {'Fake Rate [%]':>12}")
 print("-" * 103)
 for name, matched_val, totalSV_val, totalGV_val, eff_val, err_eff_val, fr_val, err_fr_val in rows:
-    print(f"{name:<12}     {matched_val:>12.0f}     {totalSV_val:>12.0f}     {totalGV_val:>12.0f}     {eff_val*100:8.2f}+-{err_eff_val*100:>.5f}      {fr_val*100:>8.2f}+-{err_fr_val*100:>.5f}")
+    print(f"{name:<12}     {matched_val:>12.0f}     {totalSV_val:>12.0f}     {totalGV_val:>12.0f}     {eff_val*100:8.2f}+-{err_eff_val*100:>.3f}      {fr_val*100:>8.2f}+-{err_fr_val*100:>.3f}")
 print("-" * 103)
 
 # %%
@@ -96,15 +100,17 @@ fig, ax = plt.subplots(1, 1)
 for name, _, _, _, eff_val, err_eff_val, fr_val, err_fr_val in rows:
     ax.errorbar(eff_val, fr_val, xerr=err_eff_val, yerr=err_fr_val, marker='o', linestyle='none', label=name)
 
-ax.errorbar(x=0.494, y=0.539, xerr=0.003, yerr=0.003, label="Central IVF", marker="o")
-ax.legend()
-ax.set_xlim(0.45, 0.58)
-ax.set_ylim(0.45, 0.58)
+#ax.errorbar(x=0.494, y=0.539, xerr=0.003, yerr=0.003, label="Central IVF", marker="o", color='black')
+ax.legend(loc="center left")
+ax.set_xlim(0.4, 0.65)
+ax.set_ylim(0.1, 0.65)
+ax.set_xlim(ax.get_xlim())
+ax.set_ylim(ax.get_ylim())
 ax.plot([0,1], [0,1], ls="--", c=".3")
 ax.set_xlabel("Efficiency")
 ax.set_ylabel("Fake Rate")
 
-    # %%
+# %%
 
 # Efficiency - Fake Rate vs minHits
 fig, ax = plt.subplots(1, 1)

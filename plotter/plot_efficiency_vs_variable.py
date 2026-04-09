@@ -29,7 +29,7 @@ def efficiencyVsVariable(num, den, bins, xlabel, outName, title=None, underOverF
                 ax.text(x=x, y=y+0.05, s="%.1f%%"%(y*100), ha='center')
 
     #if title is not None:
-    hep.cms.label()
+    hep.cms.label(com=13.6)
     fig.savefig(outName, bbox_inches='tight')
     print("Saved %s"%outName)
     plt.close()

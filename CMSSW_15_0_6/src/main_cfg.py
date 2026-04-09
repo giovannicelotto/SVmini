@@ -42,16 +42,17 @@ process.load('PhysicsTools.NanoAOD.nano_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 50
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(5000),
-    output = cms.untracked.int32(5000)
+    input = cms.untracked.int32(20000),
+    output = cms.untracked.int32(20000)
 )
 
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring( (
-        '/store/mc/RunIII2024Summer24MiniAODv6/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/MINIAODSIM/150X_mcRun3_2024_realistic_v2-v2/110000/00cbbb1e-7f25-47d0-9d35-13eb12e55cb6.root',
+        #'/store/mc/RunIII2024Summer24MiniAODv6/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/MINIAODSIM/150X_mcRun3_2024_realistic_v2-v2/110000/00cbbb1e-7f25-47d0-9d35-13eb12e55cb6.root',
+        'file:/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8.root'
      ) ),
     secondaryFileNames = cms.untracked.vstring()
 )
@@ -125,8 +126,12 @@ process.NANOEDMAODSIM1output = cms.OutputModule("NanoAODOutputModule",
     "keep *_gvCentralProducer_*_*",
     "keep *_genCandidateVertexProducer_*_*",
     "keep nanoaodFlatTable_*Table*_*_*",  # Keep event-level FlatTables
+    #"keep nanoaodFlatTable_svCandidateTable_*_*",  # for central
+    #"keep nanoaodFlatTable_vertexTable_*_*",  # for central
+
     "keep nanoaodUniqueString_nanoMetadata_*_*",  # Keep basic metadata
-    "keep nanoaodMergeableCounterTable_*_*_*"
+    "keep nanoaodMergeableCounterTable_*_*_*",
+
 
 )
 )
@@ -192,6 +197,9 @@ elif options.collection=="track":
                                 process.sv_track*
                                 process.genVertexProducer_sequence )
 elif options.collection=="central":
+    #process.nanoTableTaskCommon = cms.Task(process.boostedTauTask, process.electronTask, process.jetForMETTask, process.jetPuppiForMETTask, process.jetPuppiTablesTask, process.jetPuppiTask, process.jetTablesTask, process.jetTask, process.linkedObjects, process.lowPtElectronTablesTask, process.lowPtElectronTask, process.metTablesTask, process.muonTablesTask, process.muonTask, process.nanoMetadata, process.photonTask, process.svCandidateTable, process.tauTablesTask, process.tauTask, process.vertexTable, process.vertexTask)
+    #process.nanoSequenceCommon = cms.Sequence(process.nanoTableTaskCommon)
+    #process.nanoTableTaskFS = cms.Task()
     process.nanoAOD_step = cms.Path(
                                 process.mergedGenParticles+
                                 process.nanoSequenceMC*

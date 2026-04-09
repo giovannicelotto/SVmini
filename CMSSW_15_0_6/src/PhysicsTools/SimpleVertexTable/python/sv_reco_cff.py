@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 unpackedTracksAndVertices = cms.EDProducer('PATTrackAndVertexUnpacker',
     slimmedVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
     slimmedSecondaryVertices = cms.InputTag("slimmedSecondaryVertices"),
-    additionalTracks = cms.InputTag("lostTracks"),
+    additionalTracks = cms.InputTag(""),
     packedCandidates = cms.InputTag("packedPFCandidates")
 )
 
@@ -39,7 +39,7 @@ inclusiveVertexFinder = cms.EDProducer('InclusiveVertexFinder',
   maxNTracks = cms.uint32(30),
   maximumLongitudinalImpactParameter = cms.double(0.3),
   #maximumTimeSignificance = cms.double(3),
-  minHits = cms.uint32(4), #8
+  minHits = cms.uint32(8), #8
   minPt = cms.double(0.8),
   primaryVertices = cms.InputTag('unpackedTracksAndVertices'),
   tracks = cms.InputTag('dummyValueMap', 'selectedTracks'),
@@ -113,7 +113,7 @@ def custom_sv_tracks(process, threshold_value=0.0):
         threshold = cms.double(threshold_value)
     )
   process.sv_track = cms.Sequence(   process.unpackedTracksAndVertices*
-                                    process.dummyValueMap*
+                                      process.dummyValueMap*
                                       process.inclusiveVertexFinder*
                                       process.vertexMerger*
                                       process.trackVertexArbitrator*

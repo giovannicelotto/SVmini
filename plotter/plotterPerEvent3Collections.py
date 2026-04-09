@@ -45,17 +45,17 @@ def map_to_groups(value):
         return -1 
 # %%
 #fileName = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/HIG-RunIISummer20UL18NanoAODv9-12707.root"
-fileName_cand = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/candidate_tt_2.root"
+fileName_cand = "/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_minHits4_0p0.root"
 f_cand = uproot.open(fileName_cand)
 tree_cand = f_cand["Events"]
 branches_cand = tree_cand.arrays()
 
-fileName_central = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/central_tt_2.root"
+fileName_central = "/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/central.root"
 f_central = uproot.open(fileName_central)
 tree_central = f_central["Events"]
 branches_central = tree_central.arrays()
 
-fileName_track = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/track_tt_2.root"
+fileName_track = "/work/gcelotto/btv_mini_rerun/CMSSW_15_0_6/src/track_cov.root"
 f_track = uproot.open(fileName_track)
 tree_track = f_track["Events"]
 branches_track = tree_track.arrays()
@@ -63,7 +63,7 @@ branches_track = tree_track.arrays()
 
 
 ev=0
-for ev in [0,23,24,28,33,42,48]:
+for ev in [0,1,2,3,4]:
 
 
     nGV = branches_central["nGV"][ev]
@@ -112,7 +112,7 @@ for ev in [0,23,24,28,33,42,48]:
         ax.text(x=GV_x[gp], y=GV_y[gp], s=map_to_groups_letter(GV_Hadron_pdgId[gp]), fontsize=18)
 
     if nmySV_cand>0:
-        ax.scatter(mySV_cand_x, mySV_cand_y, label='Reco SV (IVF RunCandidate): %d Matched'%(np.sum(GV_Hadron_SV_candIdx>-1)), marker="s", color='lightgreen', s=80)
+        ax.scatter(mySV_cand_x, mySV_cand_y, label='Reco SV (IVF Track): %d Matched'%(np.sum(GV_Hadron_SV_candIdx>-1)), marker="s", color='lightgreen', s=80)
     else:
         pass
 
@@ -122,7 +122,7 @@ for ev in [0,23,24,28,33,42,48]:
         pass
 
     if nmySV_track>0:
-        ax.scatter(mySV_track_x, mySV_track_y, label='Reco SV (IVF RunTrack): %d Matched'%(np.sum(GV_Hadron_SV_trackIdx>-1)), marker=">", color='C3', s=50, alpha=0.7)
+        ax.scatter(mySV_track_x, mySV_track_y, label='Reco SV (IVF track cov): %d Matched'%(np.sum(GV_Hadron_SV_trackIdx>-1)), marker=">", color='C3', s=50, alpha=0.7)
     else:
         pass
 
@@ -130,16 +130,22 @@ for ev in [0,23,24,28,33,42,48]:
     ax.set_ylabel("Y [cm]")
 
 
-    for genIdx, svIdx in enumerate(GV_Hadron_SV_trackIdx):
+    #for genIdx, svIdx in enumerate(GV_Hadron_SV_trackIdx):
+    #    if svIdx==-1:
+    #        continue
+    #    x_values = [mySV_track_x[svIdx], GV_x[genIdx]]
+    #    y_values = [mySV_track_y[svIdx], GV_y[genIdx]]
+    #    ax.plot(x_values, y_values, color='black', marker='none')
+    for genIdx, svIdx in enumerate(GV_Hadron_SV_candIdx):
         if svIdx==-1:
             continue
-        x_values = [mySV_track_x[svIdx], GV_x[genIdx]]
-        y_values = [mySV_track_y[svIdx], GV_y[genIdx]]
+        x_values = [mySV_cand_x[svIdx], GV_x[genIdx]]
+        y_values = [mySV_cand_y[svIdx], GV_y[genIdx]]
         ax.plot(x_values, y_values, color='black', marker='none')
 
 
     ax.legend(bbox_to_anchor=(1,1.05))
-    outname = "/work/gcelotto/btv_mini_rerun/CMSSW_10_6_32_patch1/src/plots/eventDisplay/EventDisplay_ev%d.png"%ev
+    outname = "/work/gcelotto/btv_mini_rerun/plots/EventDisplay_ev%d.png"%ev
     fig.savefig(outname, bbox_inches='tight')
     print("saved ", outname)
     plt.close()

@@ -105,6 +105,11 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
         std::vector<float> Daughters_pt, Daughters_eta, Daughters_phi;
         std::vector<int> Daughters_charge, Daughters_GVidx;
         VertexDistance3D vdist;
+
+        //const reco::VertexCompositePtrCandidate* vcand;
+        
+
+
         const auto& PV0 = pvsIn->front();
         // save coordinates of SV (will be used for matching with GV)
         for (auto const& sv : *secondaryVertices) {
@@ -113,6 +118,10 @@ void GenVertexCandidateProducer::produce(edm::Event& iEvent,
             SV_x.push_back(sv.position().x());
             SV_y.push_back(sv.position().y());
             SV_z.push_back(sv.position().z());
+            
+            
+            //const auto& vtxPos = vcand->vertex();
+            //const auto& cov3 = vcand->vertexCovariance();
             }
         }
 

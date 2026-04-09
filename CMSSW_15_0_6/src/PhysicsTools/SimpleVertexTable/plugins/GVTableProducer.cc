@@ -20,6 +20,13 @@
 #include <tuple>
 #include <cmath>
 
+#include "Math/SMatrix.h"
+#include "Math/SVector.h"
+//#include "Math/SMatrixFunctions.h"
+//typedef ROOT::Math::SMatrix<float, 3, 3> Matrix3x3;
+//typedef ROOT::Math::SVector<float, 3> Vector3;
+typedef ROOT::Math::SVector<double,3> Vector3D;
+typedef reco::Vertex::CovarianceMatrix CovMatrix;
 class GenVertexProducer : public edm::stream::EDProducer<> {
 public:
     explicit GenVertexProducer(const edm::ParameterSet&);
@@ -33,6 +40,7 @@ private:
 
     std::vector<std::vector<float>> computeDistanceMatrix(
                     const std::vector<float>& SV_x,const std::vector<float>& SV_y,const std::vector<float>& SV_z,
+                    std::vector<CovMatrix> SV_cov,
                     const std::vector<float>& Hadron_GVx,const std::vector<float>& Hadron_GVy,const std::vector<float>& Hadron_GVz);
     void printDistanceMatrix(const std::vector<std::vector<float>>& distances);
     std::pair<std::vector<int>, std::vector<float>>  matchHadronsToSV(
@@ -90,6 +98,7 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         // Output vectors
         std::vector<float> Hadron_pt, Hadron_eta, Hadron_phi;
         std::vector<float> SV_x, SV_y, SV_z;
+        std::vector<CovMatrix> SV_cov;
         std::vector<float> Hadron_GVx, Hadron_GVy, Hadron_GVz;
         std::vector<float>  Hadron_GVx_i, Hadron_GVy_i, Hadron_GVz_i;
         std::vector<int> Hadron_pdgId;
@@ -106,6 +115,7 @@ void GenVertexProducer::produce(edm::Event& iEvent,
                 SV_x.push_back(sv.x());
                 SV_y.push_back(sv.y());
                 SV_z.push_back(sv.z());
+                SV_cov.push_back(sv.covariance());
             }
         }
 
@@ -216,7 +226,7 @@ void GenVertexProducer::produce(edm::Event& iEvent,
         }
         
         // Compute matrix of distances between SV and GV
-        auto distances = computeDistanceMatrix(SV_x, SV_y, SV_z, Hadron_GVx, Hadron_GVy, Hadron_GVz);
+        auto distances = computeDistanceMatrix(SV_x, SV_y, SV_z, SV_cov,Hadron_GVx, Hadron_GVy, Hadron_GVz);
         //printDistanceMatrix(distances);
         
         std::vector<int> Hadron_SVIdx(ngv, -1); // 
@@ -326,6 +336,7 @@ std::vector<std::vector<float>> GenVertexProducer::computeDistanceMatrix(
                 const std::vector<float>& SV_x,
                 const std::vector<float>& SV_y,
                 const std::vector<float>& SV_z,
+                std::vector<CovMatrix> SV_cov,
                 const std::vector<float>& Hadron_GVx,
                 const std::vector<float>& Hadron_GVy,
                 const std::vector<float>& Hadron_GVz) {
